@@ -13,6 +13,7 @@ enum ExperimentState {
     UPLOADED,
     INITIALIZED,
     RUNNING,
+    PAUSED,
     FINISHED,
     CLEARED
 };
@@ -21,10 +22,6 @@ class ExperimentProgram {
 
 private:
 /*--------------- Proměnné -----------------*/
-    // True, pokud experiment běží, jinak false
-    // Na tuto proměnou se budou často dotazovat různé
-    // časovače, aby zjistili, zda-li mají vykonat svou funkci, či nikoliv
-    volatile bool m_running;
     // Multifunkční pole counterů
     // Slouží k počítání výstupů
     uint16_t m_counters[TOTAL_OUTPUT_COUNT];
@@ -259,6 +256,10 @@ private:
 
 /*------------- Pomocné funkce ---------------*/
 
+    bool isRunning() {
+        return this->m_state == RUNNING;
+    }
+
     /**
      * Pomocná funkce pro odeslání informace na řídící zařízení,
      * že se změnila hodnota na výstupu.
@@ -267,7 +268,7 @@ private:
      * @param index Index výstupu, u kterého se změnila hodnota.
      */
     void ioChange(uint8_t ioType, uint8_t index) {
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -322,6 +323,7 @@ private:
      * experimentu.
      */
     void sendExperimentFinishedCommand() {
+        this->m_state = FINISHED;
         ServerCommandData commandData;
         commandData.header.type = COMMAND_STIMULATOR_STATE;
         commandData.header.length = 7; //sizeof(server_command_io_change_t);
@@ -329,10 +331,10 @@ private:
 #ifdef USE_MBED
         uint32_t timestamp = this->m_usedPeripherals->globalTimer->read_us();
         commandData.commandStimulatorState.timestamp = timestamp & 0xFFFFFFFF;
+        this->m_serverCommandQueue->push(commandData);
 #else
         commandData.commandStimulatorState.timestamp = 0xFFFFFFFF;
 #endif // USE_MBED
-        this->m_serverCommandQueue->push(commandData);
     }
 
 /*------ Interrupty výstupů a tlačítek -------*/
@@ -394,7 +396,7 @@ private:
 /*---------------- Časovače ------------------*/
     void tickerERP() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -452,9 +454,7 @@ erp_acc_update:
         if (this->m_counters[4] < sequenceSize) {
             this->m_counters[4]++;
         } else {
-            this->stop();
             this->sendExperimentFinishedCommand();
-            // TODO odeslat informaci, že experiment skončil
             return;
         }
         // Čítač offsetu v aktuálním accumulatoru zvětším
@@ -494,7 +494,7 @@ erp_acc_update:
 /*---------------- Časovače ------------------*/
     void tickerCVEP() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -532,7 +532,7 @@ erp_acc_update:
 
     void tickerFVEP1() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -544,7 +544,7 @@ erp_acc_update:
     }
     void tickerFVEP2() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -556,7 +556,7 @@ erp_acc_update:
     }
     void tickerFVEP3() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -568,7 +568,7 @@ erp_acc_update:
     }
     void tickerFVEP4() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -580,7 +580,7 @@ erp_acc_update:
     }
 void tickerFVEP5() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -592,7 +592,7 @@ void tickerFVEP5() {
     }
 void tickerFVEP6() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -604,7 +604,7 @@ void tickerFVEP6() {
     }
 void tickerFVEP7() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -616,7 +616,7 @@ void tickerFVEP7() {
     }
 void tickerFVEP8() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -656,7 +656,7 @@ void tickerFVEP8() {
 
     void tickerTVEP1() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -668,7 +668,7 @@ void tickerFVEP8() {
     }
     void tickerTVEP2() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -680,7 +680,7 @@ void tickerFVEP8() {
     }
     void tickerTVEP3() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -692,7 +692,7 @@ void tickerFVEP8() {
     }
     void tickerTVEP4() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -704,7 +704,7 @@ void tickerFVEP8() {
     }
     void tickerTVEP5() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -716,7 +716,7 @@ void tickerFVEP8() {
     }
     void tickerTVEP6() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -728,7 +728,7 @@ void tickerFVEP8() {
     }
     void tickerTVEP7() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -740,7 +740,7 @@ void tickerFVEP8() {
     }
     void tickerTVEP8() {
         // Pokud experiment není spuštěný, nebudu nic dělat
-        if (!this->m_running) {
+        if (!this->isRunning()) {
             return;
         }
 
@@ -787,7 +787,7 @@ void tickerFVEP8() {
 
 public:
 
-    ExperimentProgram(): m_running(false), m_outputCount(0), m_state(READY),
+    ExperimentProgram(): m_outputCount(0), m_state(READY),
                          m_usedPeripherals(NULL) {
         memset(&this->m_experimentConfig, 0, sizeof(ExperimentConfig));
     }
@@ -872,15 +872,20 @@ public:
      * Spustí experiment
      */
     void start() {
-        this->m_running = true;
         this->m_state = RUNNING;
+    }
+
+    /**
+     * Pozastaví experiment
+     */
+    void pause() {
+        this->m_state = PAUSED;
     }
 
     /**
      * Zastaví experiment
      */
     void stop() {
-        this->m_running = false;
         this->m_state = FINISHED;
     }
 
@@ -905,7 +910,6 @@ public:
         memset(this->m_counters, 0, sizeof(uint16_t) * TOTAL_OUTPUT_COUNT);
         memset(this->m_accumulators, 0, sizeof(uint32_t) * TOTAL_OUTPUT_COUNT);
         this->m_state = CLEARED;
-
     }
 
 #ifdef USE_MBED

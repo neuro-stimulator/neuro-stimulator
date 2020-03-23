@@ -97,17 +97,20 @@ public:
                     // Nastavi experiment
                     case 0x02:
                         experimentProgram.setup();
-                        break;                    
+                        break;
                     // Spustí experiment
                     case 0x03:
                         experimentProgram.start();
-                        break;                    
+                        break;
                     // Zastaví experiment
                     case 0x04:
+                        experimentProgram.pause();
+                        break;
+                    case 0x05:
                         experimentProgram.stop();
                         break;
                     // Vymaže nastavení experimentu
-                    case 0x05:
+                    case 0x06:
                         experimentProgram.clear();
                         break;
                 }
@@ -129,7 +132,7 @@ public:
 #endif // USE_MBED
                 break;
             }
-            
+
             // Zpracování části sekvence
             case COMMAND_NEXT_SEQUENCE_PART: { // 0x20
                 uint8_t index = commandData.commandSequencePart.index;
@@ -142,9 +145,9 @@ public:
 #endif // USE_MBED
                 break;
             }
-            
+
             // Backdory do systemu
-            
+
             // Přímé nastavení jednotlivých výstupů
             case COMMAND_BACKDOR_1: { // 0xF0
                 uint8_t index = commandData.commandBackdor1.index % TOTAL_OUTPUT_COUNT;

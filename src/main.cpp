@@ -267,6 +267,7 @@ int main() {
             // Založím novou instanci
             Command command;
             ServerCommandData resultData;
+            memset(&resultData, 0, sizeof(ServerCommandData));
             resultData.header.type = 0x00;
             // Získám příkaz z fronty
             commands.pop(command);

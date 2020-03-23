@@ -29,22 +29,13 @@
 #define OUTPUT_PIN_7    PB_14
 #define OUTPUT_PIN_8    PB_15
 
-// #define OUTPUT_PIN_1    PA_0
-// #define OUTPUT_PIN_2    PA_1
-// #define OUTPUT_PIN_3    PA_5
-// #define OUTPUT_PIN_4    PA_6
-// #define OUTPUT_PIN_5    PA_7
-// #define OUTPUT_PIN_6    PA_8
-// #define OUTPUT_PIN_7    PA_11
-// #define OUTPUT_PIN_8    PA_15
-
 #define INPUT_PIN_1     PC_9
 #define INPUT_PIN_2     PC_8
 #define INPUT_PIN_3     PC_6
 #define INPUT_PIN_4     PC_5
 #define INPUT_PIN_5     PC_14
 #define INPUT_PIN_6     PC_15
-#define INPUT_PIN_7     PA_10
-#define INPUT_PIN_8     PA_11
+#define INPUT_PIN_7     PA_0
+#define INPUT_PIN_8     PA_1
 
 #endif

@@ -154,7 +154,7 @@ typedef struct experiment_rea_s {
 /* -------------- UNION ----------- */
 
 union ExperimentConfig {
-    uint8_t type;                                                      // 1 byte
+    experiment_type_t type;                                            // 1 byte
     experiment_erp_t  experimentERP;                                   // 8 + 4 * TOTAL_OUTPUT_COUNT byte
     experiment_cvep_t experimentCVEP;                                  // 10 byte
     experiment_fvep_t experimentFVEP;                                  // 2 + 10 * TOTAL_OUTPUT_COUNT byte

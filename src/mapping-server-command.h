@@ -27,8 +27,9 @@ typedef struct server_command_data_header_s {
 typedef struct server_command_stimulator_state_s {
     server_command_data_header_t header;    // 2 byte
     uint8_t state;                          // 1 byte
+    uint8_t noUpdate;                       // 1 byte
     uint32_t timestamp;                     // 4 byte
-} server_command_stimulator_state_t;        // 7 byte
+} server_command_stimulator_state_t;        // 8 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
@@ -61,7 +62,7 @@ union ServerCommandData {
     server_command_stimulator_state_t commandStimulatorState;   // 7 byte
     server_command_debug_t commandDebug;
     server_command_sequence_part_request_t commandSequencePartRequest; // 8 byte
-    
+
     char rawData[OUTPUT_BUFFER_LENGTH];
 };
 

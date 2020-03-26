@@ -11,18 +11,20 @@ class Command {
 private:
 
 #ifdef USE_MBED
-void resultStimulatorState(ServerCommandData &resultCommand, Timer &globalTimer, uint8_t state) {
+void resultStimulatorState(ServerCommandData &resultCommand, Timer &globalTimer, uint8_t state, uint8_t noUpdate) {
     resultCommand.header.type = COMMAND_STIMULATOR_STATE;
-    resultCommand.header.length = 7; //sizeof(server_command_io_change_t);
+    resultCommand.header.length = 8; //sizeof(server_command_io_change_t);
     uint32_t timestamp = globalTimer.read_us();
     resultCommand.commandStimulatorState.state = state;
+    resultCommand.commandStimulatorState.noUpdate = noUpdate;
     resultCommand.commandStimulatorState.timestamp = timestamp & 0xFFFFFFFF;
 }
 #else
-void resultStimulatorState(ServerCommandData &resultCommand, uint8_t state) {
+void resultStimulatorState(ServerCommandData &resultCommand, uint8_t state, uint8_t noUpdate) {
     resultCommand.header.type = COMMAND_STIMULATOR_STATE;
-    resultCommand.header.length = 7; //sizeof(server_command_io_change_t);
+    resultCommand.header.length = 8; //sizeof(server_command_io_change_t);
     resultCommand.commandStimulatorState.state = state;
+    resultCommand.commandStimulatorState.noUpdate = noUpdate;
     resultCommand.commandStimulatorState.timestamp = 0xFFFFFFFF;
 }
 #endif // USE_MBED
@@ -45,10 +47,13 @@ public:
                 //context.serial->printf("HW resetS");
                 break;
             }
-            // Nastavení času stimulátoru
-            case COMMAND_TIME_SET: { // 0x01
-                //time_t time = data[1] | data[2] << 8 | data[3] << 16 | data[4] << 24;
-                // set_time(commandData.commandTimeSet.time);
+            // Získání aktuálního stavu stimulátoru
+            case COMMAND_STIMULATOR_STATE: { // 0x01
+#ifdef USE_MBED
+                this->resultStimulatorState(resultCommand, globalTimer, experimentProgram.getState(), 1);
+#else
+                this->resultStimulatorState(resultCommand, experimentProgram.getState(), 0);
+#endif
                 break;
             }
             // Práce s obrazovkou
@@ -115,9 +120,9 @@ public:
                         break;
                 }
 #ifdef USE_MBED
-                this->resultStimulatorState(resultCommand, globalTimer, experimentProgram.getState());
+                this->resultStimulatorState(resultCommand, globalTimer, experimentProgram.getState(), 0);
 #else
-                this->resultStimulatorState(resultCommand, experimentProgram.getState());
+                this->resultStimulatorState(resultCommand, experimentProgram.getState(), 0);
 #endif // USE_MBED
                 break;
             }
@@ -126,9 +131,9 @@ public:
                 uint8_t outputIndex = commandData.commandSetupOutput.index;
                 experimentProgram.setupOutput(outputIndex, commandData.commandSetupOutput.outputConfig);
 #ifdef USE_MBED
-                this->resultStimulatorState(resultCommand, globalTimer, 0x11);
+                this->resultStimulatorState(resultCommand, globalTimer, 0x11, 0);
 #else
-                this->resultStimulatorState(resultCommand, 0x11);
+                this->resultStimulatorState(resultCommand, 0x11, 0);
 #endif // USE_MBED
                 break;
             }
@@ -139,9 +144,9 @@ public:
                 uint32_t data = commandData.commandSequencePart.data;
                 experimentProgram.updateAccumulator(index, data);
 #ifdef USE_MBED
-                this->resultStimulatorState(resultCommand, globalTimer, 0x20);
+                this->resultStimulatorState(resultCommand, globalTimer, 0x20, 0);
 #else
-                this->resultStimulatorState(resultCommand, 0x20);
+                this->resultStimulatorState(resultCommand, 0x20, 0);
 #endif // USE_MBED
                 break;
             }
@@ -154,9 +159,9 @@ public:
                 const float brightness = commandData.commandBackdor1.brightness / 100.0;
                 // *context.usedPeripherals.outputs[index] = brightness;
 #ifdef USE_MBED
-                this->resultStimulatorState(resultCommand, globalTimer, 0xF2);
+                this->resultStimulatorState(resultCommand, globalTimer, 0xF2, 0);
 #else
-                this->resultStimulatorState(resultCommand, 0xF2);
+                this->resultStimulatorState(resultCommand, 0xF2, 0);
 #endif // USE_MBED
 
                 break;
@@ -191,6 +196,7 @@ public:
                 resultCommand.header.type = COMMAND_STIMULATOR_STATE;
                 resultCommand.header.length = 8; //sizeof(server_command_io_change_t);
                 resultCommand.commandStimulatorState.state = 0xF9;
+                resultCommand.commandStimulatorState.noUpdate = 0;
 #ifdef USE_MBED
                 uint32_t timestamp = globalTimer.read_us();
                 resultCommand.commandStimulatorState.timestamp = timestamp & 0xFFFFFFFF;

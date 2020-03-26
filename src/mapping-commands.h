@@ -4,7 +4,7 @@
 #include "mapping-experiment.h"
 
 #define COMMAND_REBOOT              0x00
-#define COMMAND_TIME_SET            0x01
+#define COMMAND_STIMULATOR_STATE    0x01
 #define COMMAND_DISPLAY             0x02
 #define COMMAND_MANAGE_EXPERIMENT   0x03
 #define COMMAND_SETUP_EXPERIMENT    0x10
@@ -22,11 +22,9 @@ typedef struct command_reboot_s {
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-typedef struct command_time_set_s {
+typedef struct command_stimulator_state_s {
     uint8_t type;
-    time_t time;
-    
-} command_time_set_t;
+} command_stimulator_state_t;
 #pragma pack(pop)
 
 #pragma pack(push, 1)
@@ -100,19 +98,19 @@ union CommandData {
     // Pomocí této hlavičky lze rozlišit, jaký příkaz se má vykonat
     uint8_t type;
     command_reboot_t commandReboot;
-    command_time_set_t commandTimeSet;
+    command_stimulator_state_t commandStimulatorState;
     command_lcd_t commandLCD;
     command_manage_experiment_t commandManageExperiment;
     command_setup_experiment_t commandSetupExperiment;
     command_setup_output_t commandSetupOutput;
     command_stimul_config_t commandStimulConfig;
     command_sequence_part_t commandSequencePart;
-    
+
     // Zadní vrátka do systému
     command_backdor_1_t commandBackdor1;
     comand_debug_t commandDebug;
-    
-    
+
+
     char rawData[128];
 };
 

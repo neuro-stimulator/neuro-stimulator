@@ -326,8 +326,9 @@ private:
         this->m_state = FINISHED;
         ServerCommandData commandData;
         commandData.header.type = COMMAND_STIMULATOR_STATE;
-        commandData.header.length = 7; //sizeof(server_command_io_change_t);
+        commandData.header.length = 8; //sizeof(server_command_io_change_t);
         commandData.commandStimulatorState.state = this->getState();
+        commandData.commandStimulatorState.noUpdate = 0;
 #ifdef USE_MBED
         uint32_t timestamp = this->m_usedPeripherals->globalTimer->read_us();
         commandData.commandStimulatorState.timestamp = timestamp & 0xFFFFFFFF;

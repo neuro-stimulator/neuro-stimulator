@@ -54,12 +54,12 @@ private:
      */
     void setupERP() {
         this->m_outputCount = this->m_experimentConfig.experimentERP.head.outputCount;
-        const float period = this->m_experimentConfig.experimentERP.head.out
+        const us_timestamp_t period = this->m_experimentConfig.experimentERP.head.out
                            + this->m_experimentConfig.experimentERP.head.wait
                            + 0.0f;
 
 #ifdef USE_MBED
-        this->m_usedPeripherals->ticker1->attach(callback(this, &ExperimentProgram::tickerERP), period);
+        this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerERP), period);
 #endif // USE_MBED
         this->sendSequencePartRequest(0, 0);
         this->sendSequencePartRequest(1, 8);
@@ -74,11 +74,11 @@ private:
      */
     void setupCVEP() {
         this->m_outputCount = this->m_experimentConfig.experimentCVEP.head.outputCount;
-        const float period = this->m_experimentConfig.experimentCVEP.head.out
+        const us_timestamp_t period = this->m_experimentConfig.experimentCVEP.head.out
                            + this->m_experimentConfig.experimentCVEP.head.wait
                            + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->ticker1->attach(callback(this, &ExperimentProgram::tickerCVEP), period);
+        this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerCVEP), period);
 #endif // USE_MBED
     }
 
@@ -92,7 +92,7 @@ private:
      */
     void setupFVEP() {
         this->m_outputCount = this->m_experimentConfig.experimentFVEP.head.outputCount;
-        float period = 0.0f;
+        us_timestamp_t period = 0.0f;
 
         switch (this->m_outputCount) {
             case 8: {
@@ -100,7 +100,7 @@ private:
                         + this->m_experimentConfig.experimentFVEP.outputs[7].timeOff
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker8->attach(callback(this, &ExperimentProgram::tickerFVEP8), period);
+                 this->m_usedPeripherals->ticker8->attach_us(callback(this, &ExperimentProgram::tickerFVEP8), period);
 #endif // USE_MBED
              }
             case 7: {
@@ -108,7 +108,7 @@ private:
                         + this->m_experimentConfig.experimentFVEP.outputs[6].timeOff
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker7->attach(callback(this, &ExperimentProgram::tickerFVEP7), period);
+                 this->m_usedPeripherals->ticker7->attach_us(callback(this, &ExperimentProgram::tickerFVEP7), period);
 #endif // USE_MBED
              }
             case 6: {
@@ -116,7 +116,7 @@ private:
                         + this->m_experimentConfig.experimentFVEP.outputs[5].timeOff
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker6->attach(callback(this, &ExperimentProgram::tickerFVEP6), period);
+                 this->m_usedPeripherals->ticker6->attach_us(callback(this, &ExperimentProgram::tickerFVEP6), period);
 #endif // USE_MBED
              }
             case 5: {
@@ -124,7 +124,7 @@ private:
                         + this->m_experimentConfig.experimentFVEP.outputs[4].timeOff
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker5->attach(callback(this, &ExperimentProgram::tickerFVEP5), period);
+                 this->m_usedPeripherals->ticker5->attach_us(callback(this, &ExperimentProgram::tickerFVEP5), period);
 #endif // USE_MBED
              }
              case 4: {
@@ -132,7 +132,7 @@ private:
                         + this->m_experimentConfig.experimentFVEP.outputs[3].timeOff
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker4->attach(callback(this, &ExperimentProgram::tickerFVEP4), period);
+                 this->m_usedPeripherals->ticker4->attach_us(callback(this, &ExperimentProgram::tickerFVEP4), period);
 #endif // USE_MBED
              }
              case 3: {
@@ -140,7 +140,7 @@ private:
                         + this->m_experimentConfig.experimentFVEP.outputs[2].timeOff
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker3->attach(callback(this, &ExperimentProgram::tickerFVEP3), period);
+                 this->m_usedPeripherals->ticker3->attach_us(callback(this, &ExperimentProgram::tickerFVEP3), period);
 #endif // USE_MBED
              }
              case 2: {
@@ -148,7 +148,7 @@ private:
                         + this->m_experimentConfig.experimentFVEP.outputs[1].timeOff
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker2->attach(callback(this, &ExperimentProgram::tickerFVEP2), period);
+                 this->m_usedPeripherals->ticker2->attach_us(callback(this, &ExperimentProgram::tickerFVEP2), period);
 #endif // USE_MBED
              }
              case 1: {
@@ -156,7 +156,7 @@ private:
                         + this->m_experimentConfig.experimentFVEP.outputs[0].timeOff
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker1->attach(callback(this, &ExperimentProgram::tickerFVEP1), period);
+                 this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerFVEP1), period);
 #endif // USE_MBED
              }
         }
@@ -172,7 +172,7 @@ private:
      */
     void setupTVEP() {
         this->m_outputCount = this->m_experimentConfig.experimentTVEP.head.outputCount;
-        float period = 0.0f;
+        us_timestamp_t period = 0.0f;
 
         switch (this->m_outputCount) {
              case 8: {
@@ -180,7 +180,7 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[7].wait
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker8->attach(callback(this, &ExperimentProgram::tickerTVEP8), period);
+                 this->m_usedPeripherals->ticker8->attach_us(callback(this, &ExperimentProgram::tickerTVEP8), period);
 #endif // USE_MBED
              }
              case 7: {
@@ -188,7 +188,7 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[6].wait
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker7->attach(callback(this, &ExperimentProgram::tickerTVEP7), period);
+                 this->m_usedPeripherals->ticker7->attach_us(callback(this, &ExperimentProgram::tickerTVEP7), period);
 #endif // USE_MBED
              }
              case 6: {
@@ -196,7 +196,7 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[5].wait
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker6->attach(callback(this, &ExperimentProgram::tickerTVEP6), period);
+                 this->m_usedPeripherals->ticker6->attach_us(callback(this, &ExperimentProgram::tickerTVEP6), period);
 #endif // USE_MBED
              }
              case 5: {
@@ -204,7 +204,7 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[4].wait
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker5->attach(callback(this, &ExperimentProgram::tickerTVEP5), period);
+                 this->m_usedPeripherals->ticker5->attach_us(callback(this, &ExperimentProgram::tickerTVEP5), period);
 #endif // USE_MBED
              }
 
@@ -213,7 +213,7 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[3].wait
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker4->attach(callback(this, &ExperimentProgram::tickerTVEP4), period);
+                 this->m_usedPeripherals->ticker4->attach_us(callback(this, &ExperimentProgram::tickerTVEP4), period);
 #endif // USE_MBED
              }
              case 3: {
@@ -221,7 +221,7 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[2].wait
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker3->attach(callback(this, &ExperimentProgram::tickerTVEP3), period);
+                 this->m_usedPeripherals->ticker3->attach_us(callback(this, &ExperimentProgram::tickerTVEP3), period);
 #endif // USE_MBED
              }
              case 2: {
@@ -229,7 +229,7 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[1].wait
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker2->attach(callback(this, &ExperimentProgram::tickerTVEP2), period);
+                 this->m_usedPeripherals->ticker2->attach_us(callback(this, &ExperimentProgram::tickerTVEP2), period);
 #endif // USE_MBED
              }
              case 1: {
@@ -237,7 +237,7 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[0].wait
                         + 0.0f;
 #ifdef USE_MBED
-                 this->m_usedPeripherals->ticker1->attach(callback(this, &ExperimentProgram::tickerTVEP1), period);
+                 this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerTVEP1), period);
 #endif // USE_MBED
              }
         }
@@ -404,7 +404,7 @@ private:
         const uint16_t index = this->m_counters[0];
         const uint16_t offset = this->m_counters[1];
         uint8_t output = (this->m_accumulators[index] >> (offset * 4)) & 0xF;
-        uint8_t period = 0;
+        us_timestamp_t period = 0;
         experiment_output_brightness_t brightness = 0;
         experiment_output_type_t outputType = 0;
         if (output == 0) {
@@ -418,6 +418,7 @@ private:
         period = this->m_experimentConfig.experimentERP.head.out;
         brightness = this->m_experimentConfig.experimentERP.outputs[output].brightness;
         outputType = this->m_experimentConfig.experimentERP.outputs[output].outputType;
+        // this->m_experimentConfig.experimentERP.head.random
 
         this->setOutput(output, brightness, outputType);
         this->ioChange(COMMAND_OUTPUT_ACTIVATED, output);
@@ -425,28 +426,28 @@ private:
 #ifdef USE_MBED
         switch (output) {
              case 7:
-                 this->m_usedPeripherals->timeout8->attach(callback(this, &ExperimentProgram::timeoutERP8), period);
+                 this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutERP8), period);
                  break;
              case 6:
-                 this->m_usedPeripherals->timeout7->attach(callback(this, &ExperimentProgram::timeoutERP7), period);
+                 this->m_usedPeripherals->timeout7->attach_us(callback(this, &ExperimentProgram::timeoutERP7), period);
                  break;
              case 5:
-                 this->m_usedPeripherals->timeout6->attach(callback(this, &ExperimentProgram::timeoutERP6), period);
+                 this->m_usedPeripherals->timeout6->attach_us(callback(this, &ExperimentProgram::timeoutERP6), period);
                  break;
              case 4:
-                 this->m_usedPeripherals->timeout5->attach(callback(this, &ExperimentProgram::timeoutERP5), period);
+                 this->m_usedPeripherals->timeout5->attach_us(callback(this, &ExperimentProgram::timeoutERP5), period);
                  break;
              case 3:
-                 this->m_usedPeripherals->timeout4->attach(callback(this, &ExperimentProgram::timeoutERP4), period);
+                 this->m_usedPeripherals->timeout4->attach_us(callback(this, &ExperimentProgram::timeoutERP4), period);
                  break;
              case 2:
-                 this->m_usedPeripherals->timeout3->attach(callback(this, &ExperimentProgram::timeoutERP3), period);
+                 this->m_usedPeripherals->timeout3->attach_us(callback(this, &ExperimentProgram::timeoutERP3), period);
                  break;
              case 1:
-                 this->m_usedPeripherals->timeout2->attach(callback(this, &ExperimentProgram::timeoutERP2), period);
+                 this->m_usedPeripherals->timeout2->attach_us(callback(this, &ExperimentProgram::timeoutERP2), period);
                  break;
              case 0:
-                 this->m_usedPeripherals->timeout1->attach(callback(this, &ExperimentProgram::timeoutERP1), period);
+                 this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutERP1), period);
                  break;
         }
 #endif // USE_MBED
@@ -511,9 +512,9 @@ erp_acc_update:
         }
         this->m_counters[0] = (this->m_counters[0] + 1) % 32;
 
-        const experiment_output_out_t period = this->m_experimentConfig.experimentCVEP.head.out;
+        const us_timestamp_t period = this->m_experimentConfig.experimentCVEP.head.out;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout1->attach(callback(this, &ExperimentProgram::timeoutCVEP), period);
+        this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutCVEP), period);
 #endif // USE_MBED
     }
 /*---------------- Timeouty ------------------*/
@@ -538,9 +539,9 @@ erp_acc_update:
         }
 
         this->tickerFVEP(0);
-        const experiment_fvep_output_time_on_t period = this->m_experimentConfig.experimentFVEP.outputs[0].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[0].timeOn + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout1->attach(callback(this, &ExperimentProgram::timeoutFVEP1), period);
+        this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutFVEP1), period);
 #endif // USE_MBED
     }
     void tickerFVEP2() {
@@ -550,9 +551,9 @@ erp_acc_update:
         }
 
         this->tickerFVEP(1);
-        const experiment_fvep_output_time_on_t period = this->m_experimentConfig.experimentFVEP.outputs[1].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[1].timeOn + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout2->attach(callback(this, &ExperimentProgram::timeoutFVEP2), period);
+        this->m_usedPeripherals->timeout2->attach_us(callback(this, &ExperimentProgram::timeoutFVEP2), period);
 #endif // USE_MBED
     }
     void tickerFVEP3() {
@@ -562,9 +563,9 @@ erp_acc_update:
         }
 
         this->tickerFVEP(2);
-        const experiment_fvep_output_time_on_t period = this->m_experimentConfig.experimentFVEP.outputs[2].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[2].timeOn + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout3->attach(callback(this, &ExperimentProgram::timeoutFVEP3), period);
+        this->m_usedPeripherals->timeout3->attach_us(callback(this, &ExperimentProgram::timeoutFVEP3), period);
 #endif // USE_MBED
     }
     void tickerFVEP4() {
@@ -574,9 +575,9 @@ erp_acc_update:
         }
 
         this->tickerFVEP(3);
-        const experiment_fvep_output_time_on_t period = this->m_experimentConfig.experimentFVEP.outputs[3].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[3].timeOn + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout4->attach(callback(this, &ExperimentProgram::timeoutFVEP4), period);
+        this->m_usedPeripherals->timeout4->attach_us(callback(this, &ExperimentProgram::timeoutFVEP4), period);
 #endif // USE_MBED
     }
 void tickerFVEP5() {
@@ -586,9 +587,9 @@ void tickerFVEP5() {
         }
 
         this->tickerFVEP(4);
-        const experiment_fvep_output_time_on_t period = this->m_experimentConfig.experimentFVEP.outputs[4].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[4].timeOn + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout5->attach(callback(this, &ExperimentProgram::timeoutFVEP5), period);
+        this->m_usedPeripherals->timeout5->attach_us(callback(this, &ExperimentProgram::timeoutFVEP5), period);
 #endif // USE_MBED
     }
 void tickerFVEP6() {
@@ -598,9 +599,9 @@ void tickerFVEP6() {
         }
 
         this->tickerFVEP(5);
-        const experiment_fvep_output_time_on_t period = this->m_experimentConfig.experimentFVEP.outputs[5].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[5].timeOn + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout6->attach(callback(this, &ExperimentProgram::timeoutFVEP6), period);
+        this->m_usedPeripherals->timeout6->attach_us(callback(this, &ExperimentProgram::timeoutFVEP6), period);
 #endif // USE_MBED
     }
 void tickerFVEP7() {
@@ -610,9 +611,9 @@ void tickerFVEP7() {
         }
 
         this->tickerFVEP(6);
-        const experiment_fvep_output_time_on_t period = this->m_experimentConfig.experimentFVEP.outputs[6].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[6].timeOn + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout7->attach(callback(this, &ExperimentProgram::timeoutFVEP7), period);
+        this->m_usedPeripherals->timeout7->attach_us(callback(this, &ExperimentProgram::timeoutFVEP7), period);
 #endif // USE_MBED
     }
 void tickerFVEP8() {
@@ -622,9 +623,9 @@ void tickerFVEP8() {
         }
 
         this->tickerFVEP(7);
-        const experiment_fvep_output_time_on_t period = this->m_experimentConfig.experimentFVEP.outputs[7].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[7].timeOn + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout8->attach(callback(this, &ExperimentProgram::timeoutFVEP8), period);
+        this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutFVEP8), period);
 #endif // USE_MBED
     }
     void tickerFVEP(uint8_t index) {
@@ -662,9 +663,9 @@ void tickerFVEP8() {
         }
 
         this->tickerTVEP(0);
-        const float period = this->m_experimentConfig.experimentTVEP.outputs[0].out + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[0].out + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout1->attach(callback(this, &ExperimentProgram::timeoutTVEP1), period);
+        this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutTVEP1), period);
 #endif // USE_MBED
     }
     void tickerTVEP2() {
@@ -674,9 +675,9 @@ void tickerFVEP8() {
         }
 
         this->tickerTVEP(1);
-        const float period = this->m_experimentConfig.experimentTVEP.outputs[1].out + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[1].out + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout2->attach(callback(this, &ExperimentProgram::timeoutTVEP2), period);
+        this->m_usedPeripherals->timeout2->attach_us(callback(this, &ExperimentProgram::timeoutTVEP2), period);
 #endif // USE_MBED
     }
     void tickerTVEP3() {
@@ -686,9 +687,9 @@ void tickerFVEP8() {
         }
 
         this->tickerTVEP(2);
-        const float period = this->m_experimentConfig.experimentTVEP.outputs[2].out + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[2].out + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout3->attach(callback(this, &ExperimentProgram::timeoutTVEP3), period);
+        this->m_usedPeripherals->timeout3->attach_us(callback(this, &ExperimentProgram::timeoutTVEP3), period);
 #endif // USE_MBED
     }
     void tickerTVEP4() {
@@ -698,9 +699,9 @@ void tickerFVEP8() {
         }
 
         this->tickerTVEP(3);
-        const float period = this->m_experimentConfig.experimentTVEP.outputs[3].out + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[3].out + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout4->attach(callback(this, &ExperimentProgram::timeoutTVEP4), period);
+        this->m_usedPeripherals->timeout4->attach_us(callback(this, &ExperimentProgram::timeoutTVEP4), period);
 #endif // USE_MBED
     }
     void tickerTVEP5() {
@@ -710,9 +711,9 @@ void tickerFVEP8() {
         }
 
         this->tickerTVEP(4);
-        const float period = this->m_experimentConfig.experimentTVEP.outputs[4].out + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[4].out + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout5->attach(callback(this, &ExperimentProgram::timeoutTVEP5), period);
+        this->m_usedPeripherals->timeout5->attach_us(callback(this, &ExperimentProgram::timeoutTVEP5), period);
 #endif // USE_MBED
     }
     void tickerTVEP6() {
@@ -722,9 +723,9 @@ void tickerFVEP8() {
         }
 
         this->tickerTVEP(5);
-        const float period = this->m_experimentConfig.experimentTVEP.outputs[5].out + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[5].out + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout6->attach(callback(this, &ExperimentProgram::timeoutTVEP6), period);
+        this->m_usedPeripherals->timeout6->attach_us(callback(this, &ExperimentProgram::timeoutTVEP6), period);
 #endif // USE_MBED
     }
     void tickerTVEP7() {
@@ -734,9 +735,9 @@ void tickerFVEP8() {
         }
 
         this->tickerTVEP(6);
-        const float period = this->m_experimentConfig.experimentTVEP.outputs[6].out + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[6].out + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout7->attach(callback(this, &ExperimentProgram::timeoutTVEP7), period);
+        this->m_usedPeripherals->timeout7->attach_us(callback(this, &ExperimentProgram::timeoutTVEP7), period);
 #endif // USE_MBED
     }
     void tickerTVEP8() {
@@ -746,9 +747,9 @@ void tickerFVEP8() {
         }
 
         this->tickerTVEP(7);
-        const float period = this->m_experimentConfig.experimentTVEP.outputs[7].out + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[7].out + 0.0f;
 #ifdef USE_MBED
-        this->m_usedPeripherals->timeout8->attach(callback(this, &ExperimentProgram::timeoutTVEP8), period);
+        this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutTVEP8), period);
 #endif // USE_MBED
     }
     void tickerTVEP(uint8_t index) {

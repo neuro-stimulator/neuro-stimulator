@@ -12,23 +12,23 @@ typedef uint8_t experiment_type_t;
 typedef uint8_t experiment_output_count_t;
 typedef uint8_t experiment_output_type_t;
 typedef uint8_t experiment_output_brightness_t;
-typedef uint8_t experiment_output_out_t;
-typedef uint8_t experiment_output_wait_t;
+typedef us_timestamp_t experiment_output_out_t;
+typedef us_timestamp_t experiment_output_wait_t;
 
 // ERP specific data types
 typedef uint8_t experiment_erp_random_t;
 typedef uint8_t experiment_erp_edge_t;
 typedef uint16_t experiment_erp_sequence_size_t;
-typedef uint8_t experiment_erp_output_pulse_up_t;
-typedef uint8_t experiment_erp_output_pulse_down_t;
+typedef us_timestamp_t experiment_erp_output_pulse_up_t;
+typedef us_timestamp_t experiment_erp_output_pulse_down_t;
 
 // CVEP specific data types
 typedef uint8_t experiment_cvep_bit_shift_t;
 typedef uint32_t experiment_cvep_pattern_t;
 
 // FVEP specific data types
-typedef float experiment_fvep_output_time_on_t;
-typedef float experiment_fvep_output_time_off_t;
+typedef us_timestamp_t experiment_fvep_output_time_on_t;
+typedef us_timestamp_t experiment_fvep_output_time_off_t;
 
 // TVEP specific data types
 typedef uint8_t experiment_tvep_output_pattern_length_t;

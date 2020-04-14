@@ -6,6 +6,7 @@
 // #include "TextLCD.h"
 #else
 #include <stdint.h>
+typedef uint64_t us_timestamp_t;
 #endif // USE_MBED
 
 typedef uint8_t experiment_type_t;

@@ -20,17 +20,17 @@ typedef struct experiment_erp_head_s {
 #pragma pack(push, 1)
 typedef struct experiment_erp_outputs_s {
     experiment_output_type_t outputType;                               // 1 byte
-    experiment_erp_output_pulse_up_t pulseUp;                          // 1 byte
-    experiment_erp_output_pulse_down_t pulseDown;                      // 1 byte
+    experiment_erp_output_pulse_up_t pulseUp;                          // 8 byte
+    experiment_erp_output_pulse_down_t pulseDown;                      // 8 byte
     experiment_output_brightness_t brightness;                         // 1 byte
-} experiment_erp_outputs_t;                                            // = 4 byte
+} experiment_erp_outputs_t;                                            // = 18 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct experiment_erp_s {
     experiment_erp_head_t head;                                        // 22 byte
-    experiment_erp_outputs_t outputs[TOTAL_OUTPUT_COUNT];              // 4  * TOTAL_OUTPUT_COUNT byte
-} experiment_erp_t;                                                    // = 22 + 4 * TOTAL_OUTPUT_COUNT byte
+    experiment_erp_outputs_t outputs[TOTAL_OUTPUT_COUNT];              // 18  * TOTAL_OUTPUT_COUNT byte
+} experiment_erp_t;                                                    // = 22 + 18 * TOTAL_OUTPUT_COUNT byte
 #pragma pack(pop)
 
 
@@ -146,7 +146,7 @@ typedef struct experiment_rea_output_s {
 
 #pragma pack(push, 1)
 typedef struct experiment_rea_s {
-    experiment_rea_head_t head;                                        // 10 byte
+    experiment_rea_head_t head;                                        // 9 byte
     experiment_rea_output_t outputs;                                   // 0 byte
 } experiment_rea_t;
 #pragma pack(pop)

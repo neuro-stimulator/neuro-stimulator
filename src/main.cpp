@@ -1,26 +1,17 @@
-#ifdef USE_MBED
 #include "mbed.h"
 // #include "TextLCD.h"
-#else
-#include <iostream>
-#include <list>
-#include <stdint.h>
-#include <time.h>
-#endif // USE_MBED
 #include "string.h"
 
 
 
 #define TOTAL_OUTPUT_COUNT            8
 
-#ifdef USE_MBED
 #ifdef BOARD_NUCLEO
 #include "mapping-nucleo.h"
 #endif
 #ifdef BOARD_DISCO
 #include "mapping-disco.h"
 #endif
-#endif // USE_MBED
 #include "mapping-server-command.h"
 #include "command.h"
 
@@ -29,7 +20,6 @@
 #define BUFF_LENGTH     128
 
 /*------------------ Variables -------------------*/
-#ifdef USE_MBED
 Serial                         pc(TX_PIN, RX_PIN);
 Serial                         graphicsSerial(GRAPHICS_TX_PIN, GRAPHICS_RX_PIN);
 I2C                            i2c_lcd(SDA_PIN, SCL_PIN);
@@ -41,7 +31,6 @@ uint8_t                        rx_buf[BUFF_LENGTH + 1];
 CircularBuffer<Command, 16>    commands;
 CircularBuffer<ServerCommandData, 16> serverCommands;
 Timer                          globalTimer;
-#endif // USE_MBED
 
 /*------------------ Callbacks -------------------*/
 
@@ -50,7 +39,6 @@ Timer                          globalTimer;
 *  - 1. pokud přišel znak ukončující příkaz
 *  - 2. pokud buffer přetekl
 **/
-#ifdef USE_MBED
 void serialCb(int events) {
     uint8_t i;
     // Pokud přišel úplný příkaz ukončený ukončovacím znakem
@@ -92,18 +80,14 @@ void serialCb(int events) {
     // Restart příjmu dat po seriové lince
     pc.read(rx_buf, BUFF_LENGTH, serialEventCb, SERIAL_EVENT_RX_ALL, 'S');
 }
-#endif // USE_MBED
 
 /*--------------- Helper methods -----------------*/
-#ifdef USE_MBED
 void updateInfoLeds(bool ready, bool bussy) {
     ledReady = ready;
     ledBussy = bussy;
 }
-#endif // USE_MBED
 
 /*-------------------- Main ----------------------*/
-#ifdef USE_MBED
 int main() {
     ExperimentProgram experimentProgram;
     used_peripherals_t usedPeripherals;
@@ -308,32 +292,3 @@ int main() {
         wait_ms(100);
     }
 }
-#else
-int main() {
-    // Inicializace proměnných
-    std::list<Command> commands{};
-    std::list<ServerCommandData> serverCommands;
-
-    // Načtení všech příkazů do bufferu
-    char commandBuffer[2048];
-    // Vyčistím paměť
-    memset(commandBuffer, 0, 2048 * sizeof(char));
-
-    // Nahrnu veškeré příkazy do bufferu
-    std::cin >> commandBuffer;
-
-    Command command;
-    size_t j = 0;
-    for (size_t i = 0; i < 2048; i++) {
-        char c = commandBuffer[i];
-        if (c == 'S') {
-            commands.push_back(command);
-            memset(&command, 0, sizeof(command));
-            j = 0;
-        } else {
-            command.commandData.rawData[j++] = c;
-        }
-    }
-
-}
-#endif // USE_MBED

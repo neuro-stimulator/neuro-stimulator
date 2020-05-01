@@ -1,13 +1,8 @@
 #ifndef PLATFORM_TYPES_H
 #define PLATFORM_TYPES_H
 
-#ifdef USE_MBED
 #include "mbed.h"
 // #include "TextLCD.h"
-#else
-#include <stdint.h>
-typedef uint64_t us_timestamp_t;
-#endif // USE_MBED
 
 typedef uint8_t experiment_type_t;
 typedef uint8_t experiment_output_count_t;

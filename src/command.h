@@ -10,7 +10,6 @@ class Command {
 
 private:
 
-#ifdef USE_MBED
 void resultStimulatorState(ServerCommandData &resultCommand, Timer &globalTimer, uint8_t state, uint8_t noUpdate) {
     resultCommand.header.type = COMMAND_STIMULATOR_STATE;
     resultCommand.header.length = 8; //sizeof(server_command_io_change_t);
@@ -19,15 +18,7 @@ void resultStimulatorState(ServerCommandData &resultCommand, Timer &globalTimer,
     resultCommand.commandStimulatorState.noUpdate = noUpdate;
     resultCommand.commandStimulatorState.timestamp = timestamp & 0xFFFFFFFF;
 }
-#else
-void resultStimulatorState(ServerCommandData &resultCommand, uint8_t state, uint8_t noUpdate) {
-    resultCommand.header.type = COMMAND_STIMULATOR_STATE;
-    resultCommand.header.length = 8; //sizeof(server_command_io_change_t);
-    resultCommand.commandStimulatorState.state = state;
-    resultCommand.commandStimulatorState.noUpdate = noUpdate;
-    resultCommand.commandStimulatorState.timestamp = 0xFFFFFFFF;
-}
-#endif // USE_MBED
+
 
 public:
     union CommandData commandData;
@@ -35,11 +26,7 @@ public:
 
     Command() {};
     ~Command() {}
-#ifdef USE_MBED
     void execute(ExperimentProgram &experimentProgram, ServerCommandData &resultCommand, Timer &globalTimer) {
-#else
-    void execute(ExperimentProgram &experimentProgram, ServerCommandData &resultCommand) {
-#endif // USE_MBED
         const char cmd = commandData.type;
         switch(cmd) {
             // Reset HW
@@ -49,11 +36,7 @@ public:
             }
             // Získání aktuálního stavu stimulátoru
             case COMMAND_STIMULATOR_STATE: { // 0x01
-#ifdef USE_MBED
                 this->resultStimulatorState(resultCommand, globalTimer, experimentProgram.getState(), 1);
-#else
-                this->resultStimulatorState(resultCommand, experimentProgram.getState(), 0);
-#endif
                 break;
             }
             // Práce s obrazovkou
@@ -119,22 +102,14 @@ public:
                         experimentProgram.clear();
                         break;
                 }
-#ifdef USE_MBED
                 this->resultStimulatorState(resultCommand, globalTimer, experimentProgram.getState(), 0);
-#else
-                this->resultStimulatorState(resultCommand, experimentProgram.getState(), 0);
-#endif // USE_MBED
                 break;
             }
             // Nastavení jednotlivých výstupů experimentu
             case COMMAND_SETUP_OUTPUT: { // 0x11
                 uint8_t outputIndex = commandData.commandSetupOutput.index;
                 experimentProgram.setupOutput(outputIndex, commandData.commandSetupOutput.outputConfig);
-#ifdef USE_MBED
                 this->resultStimulatorState(resultCommand, globalTimer, 0x11, 0);
-#else
-                this->resultStimulatorState(resultCommand, 0x11, 0);
-#endif // USE_MBED
                 break;
             }
 
@@ -143,11 +118,7 @@ public:
                 uint8_t index = commandData.commandSequencePart.index;
                 uint32_t data = commandData.commandSequencePart.data;
                 experimentProgram.updateAccumulator(index, data);
-#ifdef USE_MBED
                 this->resultStimulatorState(resultCommand, globalTimer, 0x20, 0);
-#else
-                this->resultStimulatorState(resultCommand, 0x20, 0);
-#endif // USE_MBED
                 break;
             }
 
@@ -158,11 +129,7 @@ public:
                 uint8_t index = commandData.commandBackdor1.index % TOTAL_OUTPUT_COUNT;
                 const float brightness = commandData.commandBackdor1.brightness / 100.0;
                 // *context.usedPeripherals.outputs[index] = brightness;
-#ifdef USE_MBED
                 this->resultStimulatorState(resultCommand, globalTimer, 0xF2, 0);
-#else
-                this->resultStimulatorState(resultCommand, 0xF2, 0);
-#endif // USE_MBED
 
                 break;
             }
@@ -197,12 +164,8 @@ public:
                 resultCommand.header.length = 8; //sizeof(server_command_io_change_t);
                 resultCommand.commandStimulatorState.state = 0xF9;
                 resultCommand.commandStimulatorState.noUpdate = 0;
-#ifdef USE_MBED
                 uint32_t timestamp = globalTimer.read_us();
                 resultCommand.commandStimulatorState.timestamp = timestamp & 0xFFFFFFFF;
-#else
-                resultCommand.commandStimulatorState.timestamp = 0xFFFFFFFF;
-#endif // USE_MBED
                 resultCommand.rawData[7] = cmd;
                 break;
                 // context.serial->printf("Neznamy prikaz!S");

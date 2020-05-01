@@ -2,7 +2,6 @@
 #define USED_PERIPHERALS_H
 
 typedef struct used_peripherals_s {
-#ifdef USE_MBED
     // Pointer pro jednotlivé PWM výstupy
     PwmOut *out1;
     PwmOut *out2;
@@ -57,8 +56,6 @@ typedef struct used_peripherals_s {
     Timer *globalTimer;
 
     Serial *graphicsSerial;
-#endif // USE_MBED
-
 } used_peripherals_t;
 
 #endif

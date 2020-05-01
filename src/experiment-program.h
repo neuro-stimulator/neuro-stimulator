@@ -39,10 +39,8 @@ private:
     used_peripherals_t *m_usedPeripherals;
     // konfigurace experimentu;
     ExperimentConfig m_experimentConfig;
-#ifdef USE_MBED
     // Pointer na cyklický buffer s příkazy, které se budou posílat ven
     CircularBuffer<ServerCommandData, 16> *m_serverCommandQueue;
-#endif // USE_MBED
 
 
 /*------- Setup funkce experimentů ---------*/
@@ -58,9 +56,7 @@ private:
                            + this->m_experimentConfig.experimentERP.head.wait
                            + 0.0f;
 
-#ifdef USE_MBED
         this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerERP), period);
-#endif // USE_MBED
         this->sendSequencePartRequest(0, 0);
         this->sendSequencePartRequest(1, 8);
     }
@@ -77,9 +73,7 @@ private:
         const us_timestamp_t period = this->m_experimentConfig.experimentCVEP.head.out
                            + this->m_experimentConfig.experimentCVEP.head.wait
                            + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerCVEP), period);
-#endif // USE_MBED
     }
 
     /**
@@ -99,65 +93,49 @@ private:
                  period = this->m_experimentConfig.experimentFVEP.outputs[7].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[7].timeOff
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker8->attach_us(callback(this, &ExperimentProgram::tickerFVEP8), period);
-#endif // USE_MBED
              }
             case 7: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[6].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[6].timeOff
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker7->attach_us(callback(this, &ExperimentProgram::tickerFVEP7), period);
-#endif // USE_MBED
              }
             case 6: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[5].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[5].timeOff
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker6->attach_us(callback(this, &ExperimentProgram::tickerFVEP6), period);
-#endif // USE_MBED
              }
             case 5: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[4].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[4].timeOff
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker5->attach_us(callback(this, &ExperimentProgram::tickerFVEP5), period);
-#endif // USE_MBED
              }
              case 4: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[3].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[3].timeOff
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker4->attach_us(callback(this, &ExperimentProgram::tickerFVEP4), period);
-#endif // USE_MBED
              }
              case 3: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[2].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[2].timeOff
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker3->attach_us(callback(this, &ExperimentProgram::tickerFVEP3), period);
-#endif // USE_MBED
              }
              case 2: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[1].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[1].timeOff
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker2->attach_us(callback(this, &ExperimentProgram::tickerFVEP2), period);
-#endif // USE_MBED
              }
              case 1: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[0].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[0].timeOff
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerFVEP1), period);
-#endif // USE_MBED
              }
         }
     }
@@ -179,66 +157,50 @@ private:
                  period = this->m_experimentConfig.experimentTVEP.outputs[7].out
                         + this->m_experimentConfig.experimentTVEP.outputs[7].wait
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker8->attach_us(callback(this, &ExperimentProgram::tickerTVEP8), period);
-#endif // USE_MBED
              }
              case 7: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[6].out
                         + this->m_experimentConfig.experimentTVEP.outputs[6].wait
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker7->attach_us(callback(this, &ExperimentProgram::tickerTVEP7), period);
-#endif // USE_MBED
              }
              case 6: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[5].out
                         + this->m_experimentConfig.experimentTVEP.outputs[5].wait
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker6->attach_us(callback(this, &ExperimentProgram::tickerTVEP6), period);
-#endif // USE_MBED
              }
              case 5: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[4].out
                         + this->m_experimentConfig.experimentTVEP.outputs[4].wait
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker5->attach_us(callback(this, &ExperimentProgram::tickerTVEP5), period);
-#endif // USE_MBED
              }
 
              case 4: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[3].out
                         + this->m_experimentConfig.experimentTVEP.outputs[3].wait
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker4->attach_us(callback(this, &ExperimentProgram::tickerTVEP4), period);
-#endif // USE_MBED
              }
              case 3: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[2].out
                         + this->m_experimentConfig.experimentTVEP.outputs[2].wait
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker3->attach_us(callback(this, &ExperimentProgram::tickerTVEP3), period);
-#endif // USE_MBED
              }
              case 2: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[1].out
                         + this->m_experimentConfig.experimentTVEP.outputs[1].wait
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker2->attach_us(callback(this, &ExperimentProgram::tickerTVEP2), period);
-#endif // USE_MBED
              }
              case 1: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[0].out
                         + this->m_experimentConfig.experimentTVEP.outputs[0].wait
                         + 0.0f;
-#ifdef USE_MBED
                  this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerTVEP1), period);
-#endif // USE_MBED
              }
         }
     }
@@ -276,15 +238,9 @@ private:
         commandData.header.type = ioType;
         commandData.header.length = 7; //sizeof(server_command_io_change_t);
         commandData.commandIOChange.index = index;
-#ifdef USE_MBED
         uint32_t timestamp = this->m_usedPeripherals->globalTimer->read_us();
         commandData.commandIOChange.timestamp = timestamp & 0xFFFFFFFF;
         this->m_serverCommandQueue->push(commandData);
-#else
-        commandData.commandIOChange.timestamp = 0xFFFFFFFF;
-        // TODO odeslat IO změnu na výstup
-#endif // USE_MBED
-
     }
 
     /**
@@ -304,7 +260,6 @@ private:
      * @param outputType Typ výstupu @link experiment_output_type_t
      */
     void setOutput(uint8_t index, experiment_output_brightness_t brightness, experiment_output_type_t outputType) {
-#ifdef USE_MBED
         if ((outputType & 0x01) == 1) {
             // Jedná se o LED -> tak ji rozsvítím podle svítivosti
             *this->m_usedPeripherals->outputs[index] = brightness;
@@ -314,8 +269,6 @@ private:
             this->m_usedPeripherals->graphicsSerial->putc(outputType);
             this->m_usedPeripherals->graphicsSerial->putc(0xFF);
         }
-#else
-#endif // USE_MBED
     }
 
     /**
@@ -329,17 +282,12 @@ private:
         commandData.header.length = 8; //sizeof(server_command_io_change_t);
         commandData.commandStimulatorState.state = this->getState();
         commandData.commandStimulatorState.noUpdate = 0;
-#ifdef USE_MBED
         uint32_t timestamp = this->m_usedPeripherals->globalTimer->read_us();
         commandData.commandStimulatorState.timestamp = timestamp & 0xFFFFFFFF;
         this->m_serverCommandQueue->push(commandData);
-#else
-        commandData.commandStimulatorState.timestamp = 0xFFFFFFFF;
-#endif // USE_MBED
     }
 
 /*------ Interrupty výstupů a tlačítek -------*/
-#ifdef USE_MBED
     void input1Interrupt() {this->inputInterrupt(0);}
     void input2Interrupt() {this->inputInterrupt(1);}
     void input3Interrupt() {this->inputInterrupt(2);}
@@ -368,7 +316,6 @@ private:
         this->m_usedPeripherals->interruptIn2->fall(callback(this, &ExperimentProgram::input2Interrupt));
         this->m_usedPeripherals->interruptIn1->fall(callback(this, &ExperimentProgram::input1Interrupt));
     }
-#endif // USE_MBED
 
 /*---------------- ERP funkce ----------------*/
 
@@ -385,13 +332,9 @@ private:
         commandData.header.length = 9; //sizeof(server_command_io_change_t);
         commandData.commandSequencePartRequest.offset = offset;
         commandData.commandSequencePartRequest.index = index;
-#ifdef USE_MBED
         uint32_t timestamp = this->m_usedPeripherals->globalTimer->read_us();
         commandData.commandSequencePartRequest.timestamp = timestamp & 0xFFFFFFFF;
         this->m_serverCommandQueue->push(commandData);
-#else
-        commandData.commandSequencePartRequest.timestamp = 0xFFFFFFFF;
-#endif // USE_MBED
     }
 
 /*---------------- Časovače ------------------*/
@@ -423,7 +366,6 @@ private:
         this->setOutput(output, brightness, outputType);
         this->ioChange(COMMAND_OUTPUT_ACTIVATED, output);
 
-#ifdef USE_MBED
         switch (output) {
              case 7:
                  this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutERP8), period);
@@ -450,7 +392,6 @@ private:
                  this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutERP1), period);
                  break;
         }
-#endif // USE_MBED
 erp_acc_update:
         const experiment_erp_sequence_size_t sequenceSize = this->m_experimentConfig.experimentERP.head.sequenceSize;
         if (this->m_counters[4] < sequenceSize) {
@@ -477,7 +418,6 @@ erp_acc_update:
     }
 /*---------------- Timeouty ------------------*/
 
-#ifdef USE_MBED
     void timeoutERP1() {this->timeoutERP(0);}
     void timeoutERP2() {this->timeoutERP(1);}
     void timeoutERP3() {this->timeoutERP(2);}
@@ -490,7 +430,6 @@ erp_acc_update:
         this->turnOffOutput(index);
         this->ioChange(COMMAND_OUTPUT_DEACTIVATED, index);
     }
-#endif // USE_MBED
 
 /*--------------- CVEP funkce ----------------*/
 /*---------------- Časovače ------------------*/
@@ -513,13 +452,10 @@ erp_acc_update:
         this->m_counters[0] = (this->m_counters[0] + 1) % 32;
 
         const us_timestamp_t period = this->m_experimentConfig.experimentCVEP.head.out;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutCVEP), period);
-#endif // USE_MBED
     }
 /*---------------- Timeouty ------------------*/
 
-#ifdef USE_MBED
     void timeoutCVEP() {
         for (experiment_output_count_t i = 0; i < this->m_outputCount; i++) {
            this->turnOffOutput(i);
@@ -527,8 +463,6 @@ erp_acc_update:
            this->m_inputButtonDelays[i] = 0;
         }
     }
-#endif // USE_MBED
-
 /*--------------- FVEP funkce ----------------*/
 /*---------------- Časovače ------------------*/
 
@@ -540,9 +474,7 @@ erp_acc_update:
 
         this->tickerFVEP(0);
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[0].timeOn + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutFVEP1), period);
-#endif // USE_MBED
     }
     void tickerFVEP2() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -552,9 +484,7 @@ erp_acc_update:
 
         this->tickerFVEP(1);
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[1].timeOn + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout2->attach_us(callback(this, &ExperimentProgram::timeoutFVEP2), period);
-#endif // USE_MBED
     }
     void tickerFVEP3() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -564,9 +494,7 @@ erp_acc_update:
 
         this->tickerFVEP(2);
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[2].timeOn + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout3->attach_us(callback(this, &ExperimentProgram::timeoutFVEP3), period);
-#endif // USE_MBED
     }
     void tickerFVEP4() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -576,9 +504,7 @@ erp_acc_update:
 
         this->tickerFVEP(3);
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[3].timeOn + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout4->attach_us(callback(this, &ExperimentProgram::timeoutFVEP4), period);
-#endif // USE_MBED
     }
 void tickerFVEP5() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -588,9 +514,7 @@ void tickerFVEP5() {
 
         this->tickerFVEP(4);
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[4].timeOn + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout5->attach_us(callback(this, &ExperimentProgram::timeoutFVEP5), period);
-#endif // USE_MBED
     }
 void tickerFVEP6() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -600,9 +524,7 @@ void tickerFVEP6() {
 
         this->tickerFVEP(5);
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[5].timeOn + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout6->attach_us(callback(this, &ExperimentProgram::timeoutFVEP6), period);
-#endif // USE_MBED
     }
 void tickerFVEP7() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -612,9 +534,7 @@ void tickerFVEP7() {
 
         this->tickerFVEP(6);
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[6].timeOn + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout7->attach_us(callback(this, &ExperimentProgram::timeoutFVEP7), period);
-#endif // USE_MBED
     }
 void tickerFVEP8() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -624,9 +544,7 @@ void tickerFVEP8() {
 
         this->tickerFVEP(7);
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[7].timeOn + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutFVEP8), period);
-#endif // USE_MBED
     }
     void tickerFVEP(uint8_t index) {
         const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentFVEP.outputs[index].brightness / 100.0f;
@@ -637,7 +555,6 @@ void tickerFVEP8() {
     }
 /*---------------- Timeouty ------------------*/
 
-#ifdef USE_MBED
     void timeoutFVEP1() {this->timeoutFVEP(0);}
     void timeoutFVEP2() {this->timeoutFVEP(1);}
     void timeoutFVEP3() {this->timeoutFVEP(2);}
@@ -650,8 +567,6 @@ void tickerFVEP8() {
         this->turnOffOutput(index);
         this->ioChange(COMMAND_OUTPUT_DEACTIVATED, index);
     }
-#endif // USE_MBED
-
 
 /*--------------- TVEP funkce ----------------*/
 /*---------------- Časovače ------------------*/
@@ -664,9 +579,7 @@ void tickerFVEP8() {
 
         this->tickerTVEP(0);
         const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[0].out + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutTVEP1), period);
-#endif // USE_MBED
     }
     void tickerTVEP2() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -676,9 +589,7 @@ void tickerFVEP8() {
 
         this->tickerTVEP(1);
         const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[1].out + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout2->attach_us(callback(this, &ExperimentProgram::timeoutTVEP2), period);
-#endif // USE_MBED
     }
     void tickerTVEP3() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -688,9 +599,7 @@ void tickerFVEP8() {
 
         this->tickerTVEP(2);
         const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[2].out + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout3->attach_us(callback(this, &ExperimentProgram::timeoutTVEP3), period);
-#endif // USE_MBED
     }
     void tickerTVEP4() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -700,9 +609,7 @@ void tickerFVEP8() {
 
         this->tickerTVEP(3);
         const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[3].out + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout4->attach_us(callback(this, &ExperimentProgram::timeoutTVEP4), period);
-#endif // USE_MBED
     }
     void tickerTVEP5() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -712,9 +619,7 @@ void tickerFVEP8() {
 
         this->tickerTVEP(4);
         const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[4].out + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout5->attach_us(callback(this, &ExperimentProgram::timeoutTVEP5), period);
-#endif // USE_MBED
     }
     void tickerTVEP6() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -724,9 +629,7 @@ void tickerFVEP8() {
 
         this->tickerTVEP(5);
         const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[5].out + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout6->attach_us(callback(this, &ExperimentProgram::timeoutTVEP6), period);
-#endif // USE_MBED
     }
     void tickerTVEP7() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -736,9 +639,7 @@ void tickerFVEP8() {
 
         this->tickerTVEP(6);
         const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[6].out + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout7->attach_us(callback(this, &ExperimentProgram::timeoutTVEP7), period);
-#endif // USE_MBED
     }
     void tickerTVEP8() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -748,9 +649,7 @@ void tickerFVEP8() {
 
         this->tickerTVEP(7);
         const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[7].out + 0.0f;
-#ifdef USE_MBED
         this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutTVEP8), period);
-#endif // USE_MBED
     }
     void tickerTVEP(uint8_t index) {
         const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentTVEP.outputs[index].brightness / 100.0f;
@@ -864,11 +763,9 @@ public:
         }
     }
 
-#ifdef USE_MBED
     void initInterrupts() {
         this->setupInputInterrupts();
     }
-#endif // USE_MBED
 
     /**
      * Spustí experiment
@@ -896,17 +793,13 @@ public:
      * Dále vymaže veškeré pomocné buffery.
      */
     void clear() {
-#ifdef USE_MBED
         for (uint8_t i = 0; i < TOTAL_OUTPUT_COUNT; i++) {
             // Temito dvema radky se zastavi blikani LEDek
             *this->m_usedPeripherals->outputs[i] = 0;
             // Timto se detachnou veškeré timery, takže přestanou
             // generovat přerušení
-#ifdef USE_MBED
             this->m_usedPeripherals->tickers[i]->detach();
-#endif // USE_MBED
         }
-#endif // USE_MBED
         memset(&this->m_experimentConfig, 0, sizeof(ExperimentConfig));
         memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
         memset(this->m_counters, 0, sizeof(uint16_t) * TOTAL_OUTPUT_COUNT);
@@ -914,7 +807,6 @@ public:
         this->m_state = CLEARED;
     }
 
-#ifdef USE_MBED
     void setPeripherals(used_peripherals_t *peripherals) {
         this->m_usedPeripherals = peripherals;
     }
@@ -922,7 +814,6 @@ public:
     void setServerCommandQueue(CircularBuffer<ServerCommandData, 16> *serverCommandQueue) {
         this->m_serverCommandQueue = serverCommandQueue;
     }
-#endif // USE_MBED
 
     void copyExperimentConfig(void *config) {
         memcpy(config, &this->m_experimentConfig, sizeof(ExperimentConfig));

@@ -52,13 +52,29 @@ private:
      */
     void setupERP() {
         this->m_outputCount = this->m_experimentConfig.experimentERP.head.outputCount;
-        const us_timestamp_t period = this->m_experimentConfig.experimentERP.head.out
+        this->m_experimentConfig.experimentERP.randomBase = 10;
+        us_timestamp_t period = this->m_experimentConfig.experimentERP.head.out
                            + this->m_experimentConfig.experimentERP.head.wait
                            + 0.0f;
+        const experiment_erp_random_t randomType = this->m_experimentConfig.experimentERP.head.random;
 
-        this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerERP), period);
+        us_timestamp_t randomWait = 0;
+
+        switch (randomType) {
+            case SHORT:
+                randomWait = this->m_experimentConfig.experimentERP.randomBase * ((20 + 80) * 1000);
+                break;
+            case LONG:
+                randomWait = this->m_experimentConfig.experimentERP.randomBase * ((20 + 100) * 1000);
+                break;
+            case SHORT_LONG:
+                randomWait = this->m_experimentConfig.experimentERP.randomBase * ((40 + 80) * 1000);
+                break;
+        }
+
+        this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerERP), period + randomWait);
         this->sendSequencePartRequest(0, 0);
-        this->sendSequencePartRequest(1, 8);
+        this->sendSequencePartRequest(8, 1);
     }
 
 
@@ -94,48 +110,56 @@ private:
                         + this->m_experimentConfig.experimentFVEP.outputs[7].timeOff
                         + 0.0f;
                  this->m_usedPeripherals->ticker8->attach_us(callback(this, &ExperimentProgram::tickerFVEP8), period);
+                 __attribute__ ((fallthrough));
              }
             case 7: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[6].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[6].timeOff
                         + 0.0f;
                  this->m_usedPeripherals->ticker7->attach_us(callback(this, &ExperimentProgram::tickerFVEP7), period);
+                 __attribute__ ((fallthrough));
              }
             case 6: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[5].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[5].timeOff
                         + 0.0f;
                  this->m_usedPeripherals->ticker6->attach_us(callback(this, &ExperimentProgram::tickerFVEP6), period);
+                 __attribute__ ((fallthrough));
              }
             case 5: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[4].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[4].timeOff
                         + 0.0f;
                  this->m_usedPeripherals->ticker5->attach_us(callback(this, &ExperimentProgram::tickerFVEP5), period);
+                 __attribute__ ((fallthrough));
              }
              case 4: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[3].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[3].timeOff
                         + 0.0f;
                  this->m_usedPeripherals->ticker4->attach_us(callback(this, &ExperimentProgram::tickerFVEP4), period);
+                 __attribute__ ((fallthrough));
              }
              case 3: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[2].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[2].timeOff
                         + 0.0f;
                  this->m_usedPeripherals->ticker3->attach_us(callback(this, &ExperimentProgram::tickerFVEP3), period);
+                 __attribute__ ((fallthrough));
              }
              case 2: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[1].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[1].timeOff
                         + 0.0f;
                  this->m_usedPeripherals->ticker2->attach_us(callback(this, &ExperimentProgram::tickerFVEP2), period);
+                 __attribute__ ((fallthrough));
              }
              case 1: {
                  period = this->m_experimentConfig.experimentFVEP.outputs[0].timeOn
                         + this->m_experimentConfig.experimentFVEP.outputs[0].timeOff
                         + 0.0f;
                  this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerFVEP1), period);
+                 __attribute__ ((fallthrough));
              }
         }
     }
@@ -158,24 +182,28 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[7].wait
                         + 0.0f;
                  this->m_usedPeripherals->ticker8->attach_us(callback(this, &ExperimentProgram::tickerTVEP8), period);
+                 __attribute__ ((fallthrough));
              }
              case 7: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[6].out
                         + this->m_experimentConfig.experimentTVEP.outputs[6].wait
                         + 0.0f;
                  this->m_usedPeripherals->ticker7->attach_us(callback(this, &ExperimentProgram::tickerTVEP7), period);
+                 __attribute__ ((fallthrough));
              }
              case 6: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[5].out
                         + this->m_experimentConfig.experimentTVEP.outputs[5].wait
                         + 0.0f;
                  this->m_usedPeripherals->ticker6->attach_us(callback(this, &ExperimentProgram::tickerTVEP6), period);
+                 __attribute__ ((fallthrough));
              }
              case 5: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[4].out
                         + this->m_experimentConfig.experimentTVEP.outputs[4].wait
                         + 0.0f;
                  this->m_usedPeripherals->ticker5->attach_us(callback(this, &ExperimentProgram::tickerTVEP5), period);
+                 __attribute__ ((fallthrough));
              }
 
              case 4: {
@@ -183,24 +211,28 @@ private:
                         + this->m_experimentConfig.experimentTVEP.outputs[3].wait
                         + 0.0f;
                  this->m_usedPeripherals->ticker4->attach_us(callback(this, &ExperimentProgram::tickerTVEP4), period);
+                 __attribute__ ((fallthrough));
              }
              case 3: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[2].out
                         + this->m_experimentConfig.experimentTVEP.outputs[2].wait
                         + 0.0f;
                  this->m_usedPeripherals->ticker3->attach_us(callback(this, &ExperimentProgram::tickerTVEP3), period);
+                 __attribute__ ((fallthrough));
              }
              case 2: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[1].out
                         + this->m_experimentConfig.experimentTVEP.outputs[1].wait
                         + 0.0f;
                  this->m_usedPeripherals->ticker2->attach_us(callback(this, &ExperimentProgram::tickerTVEP2), period);
+                 __attribute__ ((fallthrough));
              }
              case 1: {
                  period = this->m_experimentConfig.experimentTVEP.outputs[0].out
                         + this->m_experimentConfig.experimentTVEP.outputs[0].wait
                         + 0.0f;
                  this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerTVEP1), period);
+                 __attribute__ ((fallthrough));
              }
         }
     }
@@ -288,6 +320,7 @@ private:
     }
 
 /*------ Interrupty výstupů a tlačítek -------*/
+
     void input1Interrupt() {this->inputInterrupt(0);}
     void input2Interrupt() {this->inputInterrupt(1);}
     void input3Interrupt() {this->inputInterrupt(2);}
@@ -350,6 +383,8 @@ private:
         us_timestamp_t period = 0;
         experiment_output_brightness_t brightness = 0;
         experiment_output_type_t outputType = 0;
+        experiment_erp_edge_t edge = RISING;
+        experiment_erp_random_t randomType = OFF;
         if (output == 0) {
             for (size_t i = 0; i < this->m_experimentConfig.experimentERP.head.outputCount; i++) {
                 this->ioChange(COMMAND_OUTPUT_DEACTIVATED, i);
@@ -361,7 +396,25 @@ private:
         period = this->m_experimentConfig.experimentERP.head.out;
         brightness = this->m_experimentConfig.experimentERP.outputs[output].brightness;
         outputType = this->m_experimentConfig.experimentERP.outputs[output].outputType;
-        // this->m_experimentConfig.experimentERP.head.random
+        edge = this->m_experimentConfig.experimentERP.head.edge;
+        randomType = this->m_experimentConfig.experimentERP.head.random;
+
+        // Pokud je zapnutá náhodnost na náběžné hraně
+        if (randomType != OFF && edge == RISING) {
+            us_timestamp_t randomWait = 0;
+            switch (randomType) {
+                case SHORT:
+                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 21) + 80) * 1000);
+                    break;
+                case LONG:
+                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 21) + 100) * 1000);
+                    break;
+                case SHORT_LONG:
+                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 41) + 80) * 1000);
+                    break;
+            }
+            wait_us(randomWait);
+        }
 
         this->setOutput(output, brightness, outputType);
         this->ioChange(COMMAND_OUTPUT_ACTIVATED, output);
@@ -413,7 +466,7 @@ erp_acc_update:
                 // Vynuluji index na accumulator
                 this->m_counters[0] = 0;
             }
-            this->sendSequencePartRequest(this->m_counters[2], this->m_counters[3]);
+            this->sendSequencePartRequest(this->m_counters[3], this->m_counters[2]);
         }
     }
 /*---------------- Timeouty ------------------*/
@@ -427,6 +480,26 @@ erp_acc_update:
     void timeoutERP7() {this->timeoutERP(6);}
     void timeoutERP8() {this->timeoutERP(7);}
     void timeoutERP(uint8_t index) {
+        const experiment_erp_edge_t edge = this->m_experimentConfig.experimentERP.head.edge;
+        const experiment_erp_random_t randomType = this->m_experimentConfig.experimentERP.head.random;
+
+        // Pokud je zapnutá náhodnost na náběžné hraně
+        if (randomType != OFF && edge == FALLING) {
+            us_timestamp_t randomWait = 0;
+            switch (randomType) {
+                case SHORT:
+                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 21) + 80) * 1000);
+                    break;
+                case LONG:
+                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 21) + 100) * 1000);
+                    break;
+                case SHORT_LONG:
+                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 41) + 80) * 1000);
+                    break;
+            }
+            wait_us(randomWait);
+        }
+
         this->turnOffOutput(index);
         this->ioChange(COMMAND_OUTPUT_DEACTIVATED, index);
     }
@@ -840,7 +913,5 @@ public:
         this->m_counters[3] += 8;
     }
 };
-
-
 
 #endif

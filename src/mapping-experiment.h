@@ -30,6 +30,7 @@ typedef struct experiment_erp_outputs_s {
 typedef struct experiment_erp_s {
     experiment_erp_head_t head;                                        // 22 byte
     experiment_erp_outputs_t outputs[TOTAL_OUTPUT_COUNT];              // 18  * TOTAL_OUTPUT_COUNT byte
+    ushort randomBase;                                                 // 2 byte
 } experiment_erp_t;                                                    // = 22 + 18 * TOTAL_OUTPUT_COUNT byte
 #pragma pack(pop)
 

@@ -12,8 +12,12 @@ typedef us_timestamp_t experiment_output_out_t;
 typedef us_timestamp_t experiment_output_wait_t;
 
 // ERP specific data types
-typedef uint8_t experiment_erp_random_t;
-typedef uint8_t experiment_erp_edge_t;
+enum experiment_erp_random_t {
+    OFF, SHORT, LONG, SHORT_LONG
+};
+enum experiment_erp_edge_t {
+    RISING, FALLING
+};
 typedef uint16_t experiment_erp_sequence_size_t;
 typedef us_timestamp_t experiment_erp_output_pulse_up_t;
 typedef us_timestamp_t experiment_erp_output_pulse_down_t;

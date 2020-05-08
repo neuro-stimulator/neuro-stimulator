@@ -27,10 +27,31 @@ typedef struct experiment_erp_outputs_s {
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+typedef struct experiment_erp_sequence_data_s {
+    uint16_t pointer;                                          // 2 byte
+    uint16_t accIndex;                                         // 2 byte counters[0]
+    uint16_t accOffset;                                        // 2 byte counters[1]
+    uint16_t requestIndex;                                     // 2 byte counters[2]
+    uint16_t requestOffset;                                    // 2 byte counters[3]
+} experiment_erp_sequence_data_t;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct experiment_erp_runtime_data_s {
+    ushort randomBase;                                                 // 2 byte
+    experiment_erp_sequence_data_t sequence_data;                      //  byte
+    // Multifunkční pole accumulatorů
+    // Využito hlavně v ERP pro sekvence
+    uint32_t accumulators[TOTAL_OUTPUT_COUNT];                         // 4 * TOTAL_OUTPUT_COUNT byte
+
+} experiment_erp_runtime_data_t;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 typedef struct experiment_erp_s {
     experiment_erp_head_t head;                                        // 22 byte
     experiment_erp_outputs_t outputs[TOTAL_OUTPUT_COUNT];              // 18  * TOTAL_OUTPUT_COUNT byte
-    ushort randomBase;                                                 // 2 byte
+    experiment_erp_runtime_data_t data;
 } experiment_erp_t;                                                    // = 22 + 18 * TOTAL_OUTPUT_COUNT byte
 #pragma pack(pop)
 
@@ -55,13 +76,21 @@ typedef struct experiment_cvep_head_s {
 
 #pragma pack(push, 1)
 typedef struct experiment_cvep_outputs_s {
+    // NO DATA
 } experiment_cvep_outputs_t;                                           // 0 byte
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct experiment_cvep_runtime_data_s {
+    uint8_t counter;                                                   // 1 byte
+} experiment_cvep_runtime_data_t;                                      // 1 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct experiment_cvep_s {
     experiment_cvep_head_t head;                                       // 24 byte
     experiment_cvep_outputs_t outputs;                                 // 0 byte
+    experiment_cvep_runtime_data_t data;                               // 1 byte
 } experiment_cvep_t;                                                   // = 24 byte
 #pragma pack(pop)
 
@@ -88,9 +117,16 @@ typedef struct experiment_fvep_outputs_s {
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+typedef struct experiment_fvep_runtime_data_s {
+    // NO DATA
+} experiment_fvep_runtime_data_t;                                      // 0 byte
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 typedef struct experiment_fvep_s {
     experiment_fvep_head_t head;                                       // 2 byte
     experiment_fvep_outputs_t outputs[TOTAL_OUTPUT_COUNT];             // 18 * TOTAL_OUTPUT_COUNT byte
+    experiment_fvep_runtime_data_t data;                               // 0 byte
 } experiment_fvep_t;                                                   // = 2 + 18 * TOTAL_OUTPUT_COUNT byte
 #pragma pack(pop)
 
@@ -119,10 +155,17 @@ typedef struct experiment_tvep_output_s {
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+typedef struct experiment_tvep_runtime_data_s {
+    uint16_t counters[TOTAL_OUTPUT_COUNT];                             // 2 * TOTAL_OUTPUT_COUNT byte
+} experiment_tvep_runtime_data_t;                                      // = 2 * TOTAL_OUTPUT_COUNT byte
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 typedef struct experiment_tvep_s {
     experiment_tvep_head_t head;                                       // 2 byte
     experiment_tvep_output_t outputs[TOTAL_OUTPUT_COUNT];              // 15 * TOTAL_OUTPUT_COUNT byte
-} experiment_tvep_t;                                                   // = 2 + 15 * TOTAL_OUTPUT_COUNT byte
+    experiment_tvep_runtime_data_t data;                               // 2 * TOTAL_OUTPUT_COUNT byte
+} experiment_tvep_t;                                                   // = 2 + 15 * TOTAL_OUTPUT_COUNT + 2 * TOTAL_OUTPUT_COUNT byte
 #pragma pack(pop)
 
 /* --------------- REA ------------ */
@@ -142,13 +185,21 @@ typedef struct experiment_rea_head_s {
 
 #pragma pack(push, 1)
 typedef struct experiment_rea_output_s {
+    // NO DATA
 } experiment_rea_output_t;                                             // 0 byte
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct experiment_rea_runtime_data_s {
+    // NO DATA
+} experiment_rea_runtime_data_t;                                      // 0 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct experiment_rea_s {
     experiment_rea_head_t head;                                        // 9 byte
     experiment_rea_output_t outputs;                                   // 0 byte
+    experiment_rea_runtime_data_t data;                                // 0 byte
 } experiment_rea_t;
 #pragma pack(pop)
 

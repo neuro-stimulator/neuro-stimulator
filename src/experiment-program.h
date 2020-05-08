@@ -21,13 +21,7 @@ enum ExperimentState {
 class ExperimentProgram {
 
 private:
-/*--------------- Proměnné -----------------*/
-    // Multifunkční pole counterů
-    // Slouží k počítání výstupů
-    uint16_t m_counters[TOTAL_OUTPUT_COUNT];
-    // Multifunkční pole accumulatorů
-    // Využito hlavně v ERP pro sekvence
-    uint32_t m_accumulators[TOTAL_OUTPUT_COUNT];
+/*---------------- Proměnné ------------------*/
     // Pole pro zabránění několikanásobnému stisku tlačítka
     // během jednoho cyklu
     uint8_t m_inputButtonDelays[TOTAL_OUTPUT_COUNT];
@@ -43,7 +37,7 @@ private:
     CircularBuffer<ServerCommandData, 16> *m_serverCommandQueue;
 
 
-/*------- Setup funkce experimentů ---------*/
+/*-------- Setup funkce experimentů ----------*/
     /**
      * Provede se inicializace ERP experimentu.
      * Uloží se počet výstupů do samostatné proměnné.
@@ -52,7 +46,7 @@ private:
      */
     void setupERP() {
         this->m_outputCount = this->m_experimentConfig.experimentERP.head.outputCount;
-        this->m_experimentConfig.experimentERP.randomBase = 10;
+        this->m_experimentConfig.experimentERP.data.randomBase = 10;
         us_timestamp_t period = this->m_experimentConfig.experimentERP.head.out
                            + this->m_experimentConfig.experimentERP.head.wait
                            + 0.0f;
@@ -62,13 +56,15 @@ private:
 
         switch (randomType) {
             case SHORT:
-                randomWait = this->m_experimentConfig.experimentERP.randomBase * ((20 + 80) * 1000);
+                randomWait = this->m_experimentConfig.experimentERP.data.randomBase * ((20 + 80) * 1000);
                 break;
             case LONG:
-                randomWait = this->m_experimentConfig.experimentERP.randomBase * ((20 + 100) * 1000);
+                randomWait = this->m_experimentConfig.experimentERP.data.randomBase * ((20 + 100) * 1000);
                 break;
             case SHORT_LONG:
-                randomWait = this->m_experimentConfig.experimentERP.randomBase * ((40 + 80) * 1000);
+                randomWait = this->m_experimentConfig.experimentERP.data.randomBase * ((40 + 80) * 1000);
+                break;
+            case OFF:
                 break;
         }
 
@@ -245,9 +241,6 @@ private:
         this->m_outputCount = this->m_experimentConfig.experimentTVEP.head.outputCount;
     }
 
-/*---------- Setup funkce výstupů ------------*/
-
-
 /*------------- Pomocné funkce ---------------*/
 
     bool isRunning() {
@@ -377,9 +370,9 @@ private:
             return;
         }
 
-        const uint16_t index = this->m_counters[0];
-        const uint16_t offset = this->m_counters[1];
-        uint8_t output = (this->m_accumulators[index] >> (offset * 4)) & 0xF;
+        const uint16_t index = this->m_experimentConfig.experimentERP.data.sequence_data.accIndex;
+        const uint16_t offset = this->m_experimentConfig.experimentERP.data.sequence_data.accOffset;
+        uint8_t output = (this->m_experimentConfig.experimentERP.data.accumulators[index] >> (offset * 4)) & 0xF;
         us_timestamp_t period = 0;
         experiment_output_brightness_t brightness = 0;
         experiment_output_type_t outputType = 0;
@@ -404,13 +397,15 @@ private:
             us_timestamp_t randomWait = 0;
             switch (randomType) {
                 case SHORT:
-                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 21) + 80) * 1000);
+                    randomWait = this->m_experimentConfig.experimentERP.data.randomBase * (((rand() % 21) + 80) * 1000);
                     break;
                 case LONG:
-                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 21) + 100) * 1000);
+                    randomWait = this->m_experimentConfig.experimentERP.data.randomBase * (((rand() % 21) + 100) * 1000);
                     break;
                 case SHORT_LONG:
-                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 41) + 80) * 1000);
+                    randomWait = this->m_experimentConfig.experimentERP.data.randomBase * (((rand() % 41) + 80) * 1000);
+                    break;
+                case OFF:
                     break;
             }
             wait_us(randomWait);
@@ -445,28 +440,28 @@ private:
                  this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutERP1), period);
                  break;
         }
-erp_acc_update:
+ erp_acc_update:
         const experiment_erp_sequence_size_t sequenceSize = this->m_experimentConfig.experimentERP.head.sequenceSize;
-        if (this->m_counters[4] < sequenceSize) {
-            this->m_counters[4]++;
+        if (this->m_experimentConfig.experimentERP.data.sequence_data.pointer < sequenceSize) {
+            this->m_experimentConfig.experimentERP.data.sequence_data.pointer++;
         } else {
             this->sendExperimentFinishedCommand();
             return;
         }
         // Čítač offsetu v aktuálním accumulatoru zvětším
-        this->m_counters[1]++;
+        this->m_experimentConfig.experimentERP.data.sequence_data.accOffset++;
         // Pokud offset ukazuje "mimo pole"
-        if (this->m_counters[1] == 8) {
+        if (this->m_experimentConfig.experimentERP.data.sequence_data.accOffset == 8) {
             // Vynuluji offset
-            this->m_counters[1] = 0;
+            this->m_experimentConfig.experimentERP.data.sequence_data.accOffset = 0;
             // Inkrementuji index na celý accumulator
-            this->m_counters[0]++;
+            this->m_experimentConfig.experimentERP.data.sequence_data.accIndex++;
             // Pokud index na accumulator ukazuje "mimo pole"
-            if (this->m_counters[0] == 8) {
+            if (this->m_experimentConfig.experimentERP.data.sequence_data.accIndex == 8) {
                 // Vynuluji index na accumulator
-                this->m_counters[0] = 0;
+                this->m_experimentConfig.experimentERP.data.sequence_data.accIndex = 0;
             }
-            this->sendSequencePartRequest(this->m_counters[3], this->m_counters[2]);
+            this->sendSequencePartRequest(this->m_experimentConfig.experimentERP.data.sequence_data.requestOffset, this->m_experimentConfig.experimentERP.data.sequence_data.requestIndex);
         }
     }
 /*---------------- Timeouty ------------------*/
@@ -488,13 +483,15 @@ erp_acc_update:
             us_timestamp_t randomWait = 0;
             switch (randomType) {
                 case SHORT:
-                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 21) + 80) * 1000);
+                    randomWait = this->m_experimentConfig.experimentERP.data.randomBase * (((rand() % 21) + 80) * 1000);
                     break;
                 case LONG:
-                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 21) + 100) * 1000);
+                    randomWait = this->m_experimentConfig.experimentERP.data.randomBase * (((rand() % 21) + 100) * 1000);
                     break;
                 case SHORT_LONG:
-                    randomWait = this->m_experimentConfig.experimentERP.randomBase * (((rand() % 41) + 80) * 1000);
+                    randomWait = this->m_experimentConfig.experimentERP.data.randomBase * (((rand() % 41) + 80) * 1000);
+                    break;
+                case OFF:
                     break;
             }
             wait_us(randomWait);
@@ -517,12 +514,12 @@ erp_acc_update:
         const experiment_cvep_bit_shift_t bitShift = this->m_experimentConfig.experimentCVEP.head.bitShift;
         const experiment_cvep_pattern_t pattern = this->m_experimentConfig.experimentCVEP.head.pattern;
         for (experiment_output_count_t i = 0; i < this->m_outputCount; i++) {
-            if ((pattern >> ((i * bitShift) + this->m_counters[0]) % 32) & 1) {
+            if ((pattern >> ((i * bitShift) + this->m_experimentConfig.experimentCVEP.data.counter) % 32) & 1) {
                 this->setOutput(i, brightness, outputType);
                 this->ioChange(COMMAND_OUTPUT_ACTIVATED, i);
             }
         }
-        this->m_counters[0] = (this->m_counters[0] + 1) % 32;
+        this->m_experimentConfig.experimentCVEP.data.counter = (this->m_experimentConfig.experimentCVEP.data.counter + 1) % 32;
 
         const us_timestamp_t period = this->m_experimentConfig.experimentCVEP.head.out;
         this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutCVEP), period);
@@ -579,7 +576,7 @@ erp_acc_update:
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[3].timeOn + 0.0f;
         this->m_usedPeripherals->timeout4->attach_us(callback(this, &ExperimentProgram::timeoutFVEP4), period);
     }
-void tickerFVEP5() {
+    void tickerFVEP5() {
         // Pokud experiment není spuštěný, nebudu nic dělat
         if (!this->isRunning()) {
             return;
@@ -589,7 +586,7 @@ void tickerFVEP5() {
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[4].timeOn + 0.0f;
         this->m_usedPeripherals->timeout5->attach_us(callback(this, &ExperimentProgram::timeoutFVEP5), period);
     }
-void tickerFVEP6() {
+    void tickerFVEP6() {
         // Pokud experiment není spuštěný, nebudu nic dělat
         if (!this->isRunning()) {
             return;
@@ -599,7 +596,7 @@ void tickerFVEP6() {
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[5].timeOn + 0.0f;
         this->m_usedPeripherals->timeout6->attach_us(callback(this, &ExperimentProgram::timeoutFVEP6), period);
     }
-void tickerFVEP7() {
+    void tickerFVEP7() {
         // Pokud experiment není spuštěný, nebudu nic dělat
         if (!this->isRunning()) {
             return;
@@ -609,7 +606,7 @@ void tickerFVEP7() {
         const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[6].timeOn + 0.0f;
         this->m_usedPeripherals->timeout7->attach_us(callback(this, &ExperimentProgram::timeoutFVEP7), period);
     }
-void tickerFVEP8() {
+    void tickerFVEP8() {
         // Pokud experiment není spuštěný, nebudu nic dělat
         if (!this->isRunning()) {
             return;
@@ -729,11 +726,11 @@ void tickerFVEP8() {
         const experiment_tvep_output_pattern_length_t patternLength = this->m_experimentConfig.experimentTVEP.outputs[index].patternLength;
         const experiment_tvep_output_pattern_t pattern = this->m_experimentConfig.experimentTVEP.outputs[index].pattern;
         const experiment_output_type_t outputType = this->m_experimentConfig.experimentTVEP.outputs[index].outputType;
-        if ((pattern >> (this->m_counters[index] % patternLength)) & 1) {
+        if ((pattern >> (this->m_experimentConfig.experimentTVEP.data.counters[index] % patternLength)) & 1) {
             this->setOutput(index, brightness, outputType);
             this->ioChange(COMMAND_OUTPUT_ACTIVATED, index);
         }
-        this->m_counters[index] = (this->m_counters[index] + 1) % patternLength;
+        this->m_experimentConfig.experimentTVEP.data.counters[index] = (this->m_experimentConfig.experimentTVEP.data.counters[index] + 1) % patternLength;
         this->m_inputButtonDelays[index] = 0;
     }
 /*---------------- Timeouty ------------------*/
@@ -867,16 +864,14 @@ public:
      */
     void clear() {
         for (uint8_t i = 0; i < TOTAL_OUTPUT_COUNT; i++) {
-            // Temito dvema radky se zastavi blikani LEDek
-            *this->m_usedPeripherals->outputs[i] = 0;
             // Timto se detachnou veškeré timery, takže přestanou
             // generovat přerušení
             this->m_usedPeripherals->tickers[i]->detach();
+            // Tímto nastavím veškeré výstupy na nulu
+            *this->m_usedPeripherals->outputs[i] = 0;
         }
         memset(&this->m_experimentConfig, 0, sizeof(ExperimentConfig));
         memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
-        memset(this->m_counters, 0, sizeof(uint16_t) * TOTAL_OUTPUT_COUNT);
-        memset(this->m_accumulators, 0, sizeof(uint32_t) * TOTAL_OUTPUT_COUNT);
         this->m_state = CLEARED;
     }
 
@@ -893,11 +888,11 @@ public:
     }
 
     void copyAccumulators(void *accumulators) {
-        memcpy(accumulators, this->m_accumulators, sizeof(uint32_t) * TOTAL_OUTPUT_COUNT);
+        memcpy(accumulators, this->m_experimentConfig.experimentERP.data.accumulators, sizeof(uint32_t) * TOTAL_OUTPUT_COUNT);
     }
 
     void copyCounters(void *counters) {
-        memcpy(counters, this->m_counters, sizeof(uint16_t) * TOTAL_OUTPUT_COUNT);
+        // memcpy(counters, this->m_experimentConfig.experimentERP.data.counters, sizeof(uint16_t) * TOTAL_OUTPUT_COUNT);
     }
 
     uint8_t getState() {
@@ -905,12 +900,12 @@ public:
     }
 
     void updateAccumulator(uint8_t index, uint32_t data) {
-        this->m_accumulators[index] = data;
-        this->m_counters[2]++;
-        if (this->m_counters[2] == 8) {
-            this->m_counters[2] = 0;
+        this->m_experimentConfig.experimentERP.data.accumulators[index] = data;
+        this->m_experimentConfig.experimentERP.data.sequence_data.requestIndex++;
+        if (this->m_experimentConfig.experimentERP.data.sequence_data.requestIndex == 8) {
+            this->m_experimentConfig.experimentERP.data.sequence_data.requestIndex = 0;
         }
-        this->m_counters[3] += 8;
+        this->m_experimentConfig.experimentERP.data.sequence_data.requestOffset += 8;
     }
 };
 

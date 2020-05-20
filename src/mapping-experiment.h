@@ -175,12 +175,12 @@ typedef struct experiment_rea_head_s {
     experiment_output_count_t outputCount;                             // 1 byte
     experiment_output_type_t outputType;                               // 1 byte
     experiment_rea_cycle_count_t cycleCount;                           // 1 byte
-    experiment_rea_wait_time_min_t waitTimeMin;                        // 1 byte
-    experiment_rea_wait_time_max_t waitTimeMax;                        // 1 byte
-    experiment_rea_miss_time_t missTime;                               // 1 byte
+    experiment_rea_wait_time_t waitTimeMin;                            // 8 byte
+    experiment_rea_wait_time_t waitTimeMax;                            // 8 byte
+    experiment_rea_miss_time_t missTime;                               // 8 byte
     experiment_rea_on_fail_t onFail;                                   // 1 byte
     experiment_output_brightness_t brightness;                         // 1 byte
-} experiment_rea_head_t;                                               // = 9 byte
+} experiment_rea_head_t;                                               // = 30 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
@@ -191,16 +191,17 @@ typedef struct experiment_rea_output_s {
 
 #pragma pack(push, 1)
 typedef struct experiment_rea_runtime_data_s {
-    // NO DATA
-} experiment_rea_runtime_data_t;                                      // 0 byte
+    uint16_t counter;                                                 // 2 byte
+    uint8_t usedOutput;                                               // 1 byte
+} experiment_rea_runtime_data_t;                                      // = 11 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct experiment_rea_s {
-    experiment_rea_head_t head;                                        // 9 byte
+    experiment_rea_head_t head;                                        // 30 byte
     experiment_rea_output_t outputs;                                   // 0 byte
-    experiment_rea_runtime_data_t data;                                // 0 byte
-} experiment_rea_t;
+    experiment_rea_runtime_data_t data;                                // 11 byte
+} experiment_rea_t;                                                    // = 30 byte
 #pragma pack(pop)
 
 /* -------------- UNION ----------- */

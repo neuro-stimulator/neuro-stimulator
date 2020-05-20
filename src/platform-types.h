@@ -36,9 +36,8 @@ typedef uint32_t experiment_tvep_output_pattern_t;
 
 // REA specific data types
 typedef uint8_t experiment_rea_cycle_count_t;
-typedef uint8_t experiment_rea_wait_time_min_t;
-typedef uint8_t experiment_rea_wait_time_max_t;
-typedef uint8_t experiment_rea_miss_time_t;
+typedef us_timestamp_t experiment_rea_wait_time_t;
+typedef us_timestamp_t experiment_rea_miss_time_t;
 typedef uint8_t experiment_rea_on_fail_t;
 
 #endif

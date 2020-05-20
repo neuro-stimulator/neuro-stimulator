@@ -25,6 +25,8 @@ private:
     // Pole pro zabránění několikanásobnému stisku tlačítka
     // během jednoho cyklu
     uint8_t m_inputButtonDelays[TOTAL_OUTPUT_COUNT];
+    // Poslední známé stisknuté tlačítko
+    int8_t m_lastPressedButton = -1;
     // Počet výstupů, se kterým experiment pracuje
     volatile experiment_output_count_t m_outputCount;
     // Aktuální stav stimulátoru
@@ -72,7 +74,6 @@ private:
         this->sendSequencePartRequest(0, 0);
         this->sendSequencePartRequest(8, 1);
     }
-
 
     /**
      * Provede se inicializace CVEP experimentu.
@@ -238,7 +239,10 @@ private:
      * Uloží se počet výstupů do samostatné proměnné.
      */
     void setupREA() {
-        this->m_outputCount = this->m_experimentConfig.experimentTVEP.head.outputCount;
+        this->m_outputCount = this->m_experimentConfig.experimentREA.head.outputCount;
+        this->m_experimentConfig.experimentREA.data.counter = 0;
+        const us_timestamp_t period = this->m_experimentConfig.experimentREA.head.waitTimeMax;
+        this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerREA), period);
     }
 
 /*------------- Pomocné funkce ---------------*/
@@ -326,6 +330,9 @@ private:
         if (this->m_inputButtonDelays[index] == 0) {
             this->ioChange(COMMAND_INPUT_ACTIVATED, index);
         }
+        if (this->m_lastPressedButton == -1) {
+            this->m_lastPressedButton = index;
+        }
         this->m_inputButtonDelays[index]++;
     }
 
@@ -386,7 +393,7 @@ private:
             goto erp_acc_update;
         }
         output -= 1;
-        period = this->m_experimentConfig.experimentERP.head.out;
+        period = this->m_experimentConfig.experimentERP.outputs[output].pulseDown;
         brightness = this->m_experimentConfig.experimentERP.outputs[output].brightness;
         outputType = this->m_experimentConfig.experimentERP.outputs[output].outputType;
         edge = this->m_experimentConfig.experimentERP.head.edge;
@@ -499,6 +506,8 @@ private:
 
         this->turnOffOutput(index);
         this->ioChange(COMMAND_OUTPUT_DEACTIVATED, index);
+        memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
+        this->m_lastPressedButton = -1;
     }
 
 /*--------------- CVEP funkce ----------------*/
@@ -530,8 +539,9 @@ private:
         for (experiment_output_count_t i = 0; i < this->m_outputCount; i++) {
            this->turnOffOutput(i);
            this->ioChange(COMMAND_OUTPUT_DEACTIVATED, i);
-           this->m_inputButtonDelays[i] = 0;
         }
+        memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
+        this->m_lastPressedButton = -1;
     }
 /*--------------- FVEP funkce ----------------*/
 /*---------------- Časovače ------------------*/
@@ -621,7 +631,8 @@ private:
         const experiment_output_type_t outputType = this->m_experimentConfig.experimentFVEP.outputs[index].outputType;
         this->setOutput(index, brightness, outputType);
         this->ioChange(COMMAND_OUTPUT_ACTIVATED, index);
-        this->m_inputButtonDelays[index] = 0;
+        memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
+        this->m_lastPressedButton = -1;
     }
 /*---------------- Timeouty ------------------*/
 
@@ -731,7 +742,8 @@ private:
             this->ioChange(COMMAND_OUTPUT_ACTIVATED, index);
         }
         this->m_experimentConfig.experimentTVEP.data.counters[index] = (this->m_experimentConfig.experimentTVEP.data.counters[index] + 1) % patternLength;
-        this->m_inputButtonDelays[index] = 0;
+        memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
+        this->m_lastPressedButton = -1;
     }
 /*---------------- Timeouty ------------------*/
 
@@ -750,8 +762,56 @@ private:
 
 /*---------------- REA funkce ----------------*/
 /*---------------- Časovače ------------------*/
+
+    void tickerREA() {
+        // Pokud experiment není spuštěný, nebudu nic dělat
+        if (!this->isRunning()) {
+            return;
+        }
+
+        // Ověřím, že jsem ještě nepřekročil počet cyklů
+        if (this->m_experimentConfig.experimentREA.data.counter < this->m_experimentConfig.experimentREA.head.cycleCount) {
+            this->m_experimentConfig.experimentREA.data.counter++;
+        } else {
+            // Ukončím experiment
+            this->sendExperimentFinishedCommand();
+            return;
+        }
+
+        const uint8_t output = (rand() % this->m_experimentConfig.experimentREA.head.outputCount) % TOTAL_OUTPUT_COUNT;
+        const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentREA.head.brightness;
+        const experiment_output_type_t outputType = this->m_experimentConfig.experimentREA.head.outputType;
+        const us_timestamp_t delta = this->m_experimentConfig.experimentREA.head.waitTimeMax - this->m_experimentConfig.experimentREA.head.waitTimeMin;
+        const us_timestamp_t period = this->m_experimentConfig.experimentREA.head.waitTimeMin + (rand() % delta);
+        this->m_experimentConfig.experimentREA.data.usedOutput = output;
+
+        this->setOutput(output, brightness, outputType);
+        this->ioChange(COMMAND_OUTPUT_ACTIVATED, output);
+
+        this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutREA), period);
+    }
+
 /*---------------- Timeouty ------------------*/
 
+    void timeoutREA() {
+        const uint8_t output = this->m_experimentConfig.experimentREA.data.usedOutput;
+        // TODO zjistit, co je myšleno počkat na timeout při chybné reakci
+        // const experiment_rea_on_fail_t onFail = this->m_experimentConfig.experimentREA.head.onFail;
+        // // Pokud jsem stiskl tlačítko, které ale neodpovídá výstupu
+        // if (this->m_lastPressedButton != output) {
+        //     // Pokud má při chybné reakci počkat na timeout
+        //     if (onFail != 0) {
+        //         this->sendExperimentFinishedCommand();
+        //         return;
+        //     }
+        // }
+
+        this->turnOffOutput(output);
+        this->ioChange(COMMAND_OUTPUT_DEACTIVATED, output);
+
+        memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
+        this->m_lastPressedButton = -1;
+    }
 
 
 

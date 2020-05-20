@@ -78,13 +78,13 @@ public:
             case COMMAND_MANAGE_EXPERIMENT: { // 0x03
                 const char action = commandData.commandManageExperiment.action;
                 switch (action) {
-                    // Inicializuje experiment
+                    // Uloží experiment
                     case 0x01:
-                        experimentProgram.init(commandData.commandSetupExperiment.experimentConfig);
+                        experimentProgram.save(commandData.commandSetupExperiment.experimentConfig);
                         break;
                     // Nastavi experiment
                     case 0x02:
-                        experimentProgram.setup();
+                        experimentProgram.init();
                         break;
                     // Spustí experiment
                     case 0x03:

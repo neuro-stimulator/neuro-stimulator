@@ -445,18 +445,6 @@ private:
                  break;
         }
 
-        // Získám celkovou velikost sekvence
-        const experiment_erp_sequence_size_t sequenceSize = this->m_experimentConfig.experimentERP.head.sequenceSize;
-        // Pokud jsem tuto délku nepřekoval
-        if (this->m_experimentConfig.experimentERP.data.sequence_data.pointer < sequenceSize) {
-            // Inkrementuji interní counter
-            this->m_experimentConfig.experimentERP.data.sequence_data.pointer++;
-        } else { // Dosáhl jsem délky sekvence
-            // Ukončím experiment
-            this->sendExperimentFinishedCommand();
-            // Víc už dělat nebudu
-            return;
-        }
         // Čítač offsetu v aktuálním accumulatoru zvětším
         this->m_experimentConfig.experimentERP.data.sequence_data.accOffset++;
         // Pokud offset ukazuje "mimo pole"
@@ -514,6 +502,19 @@ private:
         memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
         this->m_lastPressedButton = -1;
 
+        // Získám celkovou velikost sekvence
+        const experiment_erp_sequence_size_t sequenceSize = this->m_experimentConfig.experimentERP.head.sequenceSize;
+        // Pokud jsem tuto délku nepřekoval
+        if (this->m_experimentConfig.experimentERP.data.sequence_data.pointer < sequenceSize) {
+            // Inkrementuji interní counter
+            this->m_experimentConfig.experimentERP.data.sequence_data.pointer++;
+        } else { // Dosáhl jsem délky sekvence
+            // Ukončím experiment
+            this->sendExperimentFinishedCommand();
+            // Víc už dělat nebudu
+            return;
+        }
+
         this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::tickerERP), period);
     }
 
@@ -562,7 +563,7 @@ private:
         }
 
         this->tickerFVEP(0);
-        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[0].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[0].timeOn;
         this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutFVEP1), period);
     }
     void tickerFVEP2() {
@@ -572,7 +573,7 @@ private:
         }
 
         this->tickerFVEP(1);
-        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[1].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[1].timeOn;
         this->m_usedPeripherals->timeout2->attach_us(callback(this, &ExperimentProgram::timeoutFVEP2), period);
     }
     void tickerFVEP3() {
@@ -582,7 +583,7 @@ private:
         }
 
         this->tickerFVEP(2);
-        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[2].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[2].timeOn;
         this->m_usedPeripherals->timeout3->attach_us(callback(this, &ExperimentProgram::timeoutFVEP3), period);
     }
     void tickerFVEP4() {
@@ -592,7 +593,7 @@ private:
         }
 
         this->tickerFVEP(3);
-        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[3].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[3].timeOn;
         this->m_usedPeripherals->timeout4->attach_us(callback(this, &ExperimentProgram::timeoutFVEP4), period);
     }
     void tickerFVEP5() {
@@ -602,7 +603,7 @@ private:
         }
 
         this->tickerFVEP(4);
-        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[4].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[4].timeOn;
         this->m_usedPeripherals->timeout5->attach_us(callback(this, &ExperimentProgram::timeoutFVEP5), period);
     }
     void tickerFVEP6() {
@@ -612,7 +613,7 @@ private:
         }
 
         this->tickerFVEP(5);
-        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[5].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[5].timeOn;
         this->m_usedPeripherals->timeout6->attach_us(callback(this, &ExperimentProgram::timeoutFVEP6), period);
     }
     void tickerFVEP7() {
@@ -622,7 +623,7 @@ private:
         }
 
         this->tickerFVEP(6);
-        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[6].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[6].timeOn;
         this->m_usedPeripherals->timeout7->attach_us(callback(this, &ExperimentProgram::timeoutFVEP7), period);
     }
     void tickerFVEP8() {
@@ -632,7 +633,7 @@ private:
         }
 
         this->tickerFVEP(7);
-        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[7].timeOn + 0.0f;
+        const us_timestamp_t period = this->m_experimentConfig.experimentFVEP.outputs[7].timeOn;
         this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutFVEP8), period);
     }
     void tickerFVEP(uint8_t index) {
@@ -667,9 +668,11 @@ private:
             return;
         }
 
-        this->tickerTVEP(0);
-        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[0].out + 0.0f;
-        this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutTVEP1), period);
+        bool outputActivated = this->tickerTVEP(0);
+        if (outputActivated) {
+            const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[0].out;
+            this->m_usedPeripherals->timeout1->attach_us(callback(this, &ExperimentProgram::timeoutTVEP1), period);
+        }
     }
     void tickerTVEP2() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -677,9 +680,11 @@ private:
             return;
         }
 
-        this->tickerTVEP(1);
-        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[1].out + 0.0f;
-        this->m_usedPeripherals->timeout2->attach_us(callback(this, &ExperimentProgram::timeoutTVEP2), period);
+        bool outputActivated = this->tickerTVEP(1);
+        if (outputActivated) {
+            const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[1].out;
+            this->m_usedPeripherals->timeout2->attach_us(callback(this, &ExperimentProgram::timeoutTVEP2), period);
+        }
     }
     void tickerTVEP3() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -687,9 +692,11 @@ private:
             return;
         }
 
-        this->tickerTVEP(2);
-        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[2].out + 0.0f;
-        this->m_usedPeripherals->timeout3->attach_us(callback(this, &ExperimentProgram::timeoutTVEP3), period);
+        bool outputActivated = this->tickerTVEP(2);
+        if (outputActivated) {
+            const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[2].out;
+            this->m_usedPeripherals->timeout3->attach_us(callback(this, &ExperimentProgram::timeoutTVEP3), period);
+        }
     }
     void tickerTVEP4() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -697,9 +704,11 @@ private:
             return;
         }
 
-        this->tickerTVEP(3);
-        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[3].out + 0.0f;
-        this->m_usedPeripherals->timeout4->attach_us(callback(this, &ExperimentProgram::timeoutTVEP4), period);
+        bool outputActivated = this->tickerTVEP(3);
+        if (outputActivated) {
+            const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[3].out;
+            this->m_usedPeripherals->timeout4->attach_us(callback(this, &ExperimentProgram::timeoutTVEP4), period);
+        }
     }
     void tickerTVEP5() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -707,9 +716,11 @@ private:
             return;
         }
 
-        this->tickerTVEP(4);
-        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[4].out + 0.0f;
-        this->m_usedPeripherals->timeout5->attach_us(callback(this, &ExperimentProgram::timeoutTVEP5), period);
+        bool outputActivated = this->tickerTVEP(4);
+        if (outputActivated) {
+            const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[4].out;
+            this->m_usedPeripherals->timeout5->attach_us(callback(this, &ExperimentProgram::timeoutTVEP5), period);
+        }
     }
     void tickerTVEP6() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -717,9 +728,11 @@ private:
             return;
         }
 
-        this->tickerTVEP(5);
-        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[5].out + 0.0f;
-        this->m_usedPeripherals->timeout6->attach_us(callback(this, &ExperimentProgram::timeoutTVEP6), period);
+        bool outputActivated = this->tickerTVEP(5);
+        if (outputActivated) {
+            const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[5].out;
+            this->m_usedPeripherals->timeout6->attach_us(callback(this, &ExperimentProgram::timeoutTVEP6), period);
+        }
     }
     void tickerTVEP7() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -727,9 +740,11 @@ private:
             return;
         }
 
-        this->tickerTVEP(6);
-        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[6].out + 0.0f;
-        this->m_usedPeripherals->timeout7->attach_us(callback(this, &ExperimentProgram::timeoutTVEP7), period);
+        bool outputActivated = this->tickerTVEP(6);
+        if (outputActivated) {
+            const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[6].out;
+            this->m_usedPeripherals->timeout7->attach_us(callback(this, &ExperimentProgram::timeoutTVEP7), period);
+        }
     }
     void tickerTVEP8() {
         // Pokud experiment není spuštěný, nebudu nic dělat
@@ -737,22 +752,27 @@ private:
             return;
         }
 
-        this->tickerTVEP(7);
-        const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[7].out + 0.0f;
-        this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutTVEP8), period);
+        bool outputActivated = this->tickerTVEP(7);
+        if (outputActivated) {
+            const us_timestamp_t period = this->m_experimentConfig.experimentTVEP.outputs[7].out;
+            this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutTVEP8), period);
+        }
     }
-    void tickerTVEP(uint8_t index) {
+    bool tickerTVEP(uint8_t index) {
         const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentTVEP.outputs[index].brightness / 100.0f;
         const experiment_tvep_output_pattern_length_t patternLength = this->m_experimentConfig.experimentTVEP.outputs[index].patternLength;
         const experiment_tvep_output_pattern_t pattern = this->m_experimentConfig.experimentTVEP.outputs[index].pattern;
         const experiment_output_type_t outputType = this->m_experimentConfig.experimentTVEP.outputs[index].outputType;
+        bool outputActivated = false;
         if ((pattern >> (this->m_experimentConfig.experimentTVEP.data.counters[index] % patternLength)) & 1) {
             this->setOutput(index, brightness, outputType);
             this->ioChange(COMMAND_OUTPUT_ACTIVATED, index);
+            outputActivated = true;
         }
         this->m_experimentConfig.experimentTVEP.data.counters[index] = (this->m_experimentConfig.experimentTVEP.data.counters[index] + 1) % patternLength;
         memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
         this->m_lastPressedButton = -1;
+        return outputActivated;
     }
 /*---------------- Timeouty ------------------*/
 
@@ -834,7 +854,7 @@ public:
     /**
      * Uloží konfiguraci experimentu do paměti
      */
-    void init(ExperimentConfig &experimentConfig) {
+    void save(ExperimentConfig &experimentConfig) {
         this->clear();
         m_experimentConfig = experimentConfig;
         this->m_state = UPLOADED;
@@ -843,7 +863,7 @@ public:
     /**
      * Inicializuje uloženou konfiguraci v paměti
      */
-    void setup() {
+    void init() {
         switch(this->m_experimentConfig.type) {
             // Experiment ERP
             case 0x01:

@@ -39,6 +39,7 @@ typedef struct experiment_erp_sequence_data_s {
 #pragma pack(push, 1)
 typedef struct experiment_erp_runtime_data_s {
     ushort randomBase;                                                 // 2 byte
+    uint8_t currentOutput;                                             // 1 byte
     experiment_erp_sequence_data_t sequence_data;                      //  byte
     // Multifunkční pole accumulatorů
     // Využito hlavně v ERP pro sekvence

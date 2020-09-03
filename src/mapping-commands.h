@@ -16,20 +16,27 @@
 #define COMMAND_DEBUG               0xF1
 
 #pragma pack(push, 1)
-typedef struct command_reboot_s {
+typedef struct command_header_s {
+    uint8_t commandId;
     uint8_t type;
+} command_header_t;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct command_reboot_s {
+    command_header_t header;
 } command_reboot_t;
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct command_stimulator_state_s {
-    uint8_t type;
+    command_header_t header;
 } command_stimulator_state_t;
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct command_lcd_s {
-    uint8_t type;
+    command_header_t header;
     uint8_t action;
     uint8_t column;
     uint8_t row;
@@ -39,14 +46,14 @@ typedef struct command_lcd_s {
 
 #pragma pack(push, 1)
 typedef struct command_manage_experiment_s {
-    uint8_t type;
+    command_header_t header;
     uint8_t action;
 } command_manage_experiment_t;
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct command_setup_experiment_s {
-    uint8_t type;
+    command_header_t header;
     uint8_t action;
     ExperimentConfig experimentConfig;
 } command_setup_experiment_t;
@@ -54,7 +61,7 @@ typedef struct command_setup_experiment_s {
 
 #pragma pack(push, 1)
 typedef struct command_setup_output_s {
-    uint8_t type;
+    command_header_t header;
     uint8_t index;
     OutputConfig outputConfig;
 } command_setup_output_t;
@@ -62,7 +69,7 @@ typedef struct command_setup_output_s {
 
 #pragma pack(push, 1)
 typedef struct command_stimul_config_s {
-    uint8_t type;
+    command_header_t header;
     uint8_t index;
     uint8_t up;
     uint8_t down;
@@ -72,7 +79,7 @@ typedef struct command_stimul_config_s {
 
 #pragma pack(push, 1)
 typedef struct command_sequence_part_s {
-    uint8_t type;
+    command_header_t header;
     uint8_t index;
     uint32_t data;
 } command_sequence_part_t;
@@ -80,7 +87,7 @@ typedef struct command_sequence_part_s {
 
 #pragma pack(push, 1)
 typedef struct command_backdor_1_s {
-    uint8_t type;
+    command_header_t header;
     uint8_t index;
     uint8_t brightness;
 } command_backdor_1_t;
@@ -88,7 +95,7 @@ typedef struct command_backdor_1_s {
 
 #pragma pack(push, 1)
 typedef struct command_debug_s {
-    uint8_t type;
+    command_header_t header;
     uint8_t memoryType;
 } comand_debug_t;
 #pragma pack(pop)
@@ -96,7 +103,7 @@ typedef struct command_debug_s {
 union CommandData {
     // Společná hlavička pro všechny příkazy
     // Pomocí této hlavičky lze rozlišit, jaký příkaz se má vykonat
-    uint8_t type;
+    command_header_t header;
     command_reboot_t commandReboot;
     command_stimulator_state_t commandStimulatorState;
     command_lcd_t commandLCD;

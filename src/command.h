@@ -12,7 +12,7 @@ private:
 
 void resultStimulatorState(ServerCommandData &resultCommand, Timer &globalTimer, uint8_t state, uint8_t noUpdate) {
     resultCommand.header.type = COMMAND_STIMULATOR_STATE;
-    resultCommand.header.length = 8; //sizeof(server_command_io_change_t);
+    resultCommand.header.length = 9; //sizeof(server_command_io_change_t);
     uint32_t timestamp = globalTimer.read_us();
     resultCommand.commandStimulatorState.state = state;
     resultCommand.commandStimulatorState.noUpdate = noUpdate;
@@ -27,7 +27,8 @@ public:
     Command() {};
     ~Command() {}
     void execute(ExperimentProgram &experimentProgram, ServerCommandData &resultCommand, Timer &globalTimer) {
-        const char cmd = commandData.type;
+        const char cmd = commandData.header.type;
+        resultCommand.header.commandId = commandData.header.commandId;
         switch(cmd) {
             // Reset HW
             case COMMAND_REBOOT: { // 0x00
@@ -127,8 +128,9 @@ public:
             // Přímé nastavení jednotlivých výstupů
             case COMMAND_BACKDOR_1: { // 0xF0
                 uint8_t index = commandData.commandBackdor1.index % TOTAL_OUTPUT_COUNT;
-                const float brightness = commandData.commandBackdor1.brightness / 100.0;
-                // *context.usedPeripherals.outputs[index] = brightness;
+                const float brightness = commandData.commandBackdor1.brightness / 100.0f;
+                experimentProgram.setOutput(index, brightness);
+                //*context.usedPeripherals.outputs[index] = brightness;
                 this->resultStimulatorState(resultCommand, globalTimer, 0xF2, 0);
 
                 break;

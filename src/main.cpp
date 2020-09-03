@@ -234,8 +234,9 @@ int main() {
         pc.putc(0xFF);
 
         ServerCommandData readyCommand;
+        readyCommand.header.commandId = 0;
         readyCommand.header.type = COMMAND_STIMULATOR_STATE;
-        readyCommand.header.length = 8; //sizeof(server_command_stimulator_state_t);
+        readyCommand.header.length = 9; //sizeof(server_command_stimulator_state_t);
         uint32_t timestamp = globalTimer.read_us();
         readyCommand.commandStimulatorState.state = experimentProgram.getState();
         readyCommand.commandStimulatorState.noUpdate = 0;

@@ -260,8 +260,9 @@ private:
         }
 
         ServerCommandData commandData;
+        commandData.header.commandId = HEADER_NO_ID;
         commandData.header.type = ioType;
-        commandData.header.length = 7; //sizeof(server_command_io_change_t);
+        commandData.header.length = 8; //sizeof(server_command_io_change_t);
         commandData.commandIOChange.index = index;
         uint32_t timestamp = this->m_usedPeripherals->globalTimer->read_us();
         commandData.commandIOChange.timestamp = timestamp & 0xFFFFFFFF;
@@ -303,8 +304,9 @@ private:
     void sendExperimentFinishedCommand() {
         this->m_state = FINISHED;
         ServerCommandData commandData;
+        commandData.header.commandId = HEADER_NO_ID;
         commandData.header.type = COMMAND_STIMULATOR_STATE;
-        commandData.header.length = 8; //sizeof(server_command_io_change_t);
+        commandData.header.length = 9; //sizeof(server_command_io_change_t);
         commandData.commandStimulatorState.state = this->getState();
         commandData.commandStimulatorState.noUpdate = 0;
         uint32_t timestamp = this->m_usedPeripherals->globalTimer->read_us();
@@ -357,8 +359,9 @@ private:
      */
     void sendSequencePartRequest(uint16_t offset, uint8_t index) {
         ServerCommandData commandData;
+        commandData.header.commandId = HEADER_NO_ID;
         commandData.header.type = COMMAND_SEQUENCE_NEXT_PART_REQUEST;
-        commandData.header.length = 9; //sizeof(server_command_io_change_t);
+        commandData.header.length = 10; //sizeof(server_command_io_change_t);
         commandData.commandSequencePartRequest.offset = offset;
         commandData.commandSequencePartRequest.index = index;
         uint32_t timestamp = this->m_usedPeripherals->globalTimer->read_us();
@@ -961,6 +964,10 @@ public:
         memset(&this->m_experimentConfig, 0, sizeof(ExperimentConfig));
         memset(this->m_inputButtonDelays, 0, sizeof(uint8_t) * TOTAL_OUTPUT_COUNT);
         this->m_state = CLEARED;
+    }
+
+    void setOutput(uint8_t index, experiment_output_brightness_t brightness) {
+        this->setOutput(index, brightness, 1);
     }
 
     void setPeripherals(used_peripherals_t *peripherals) {

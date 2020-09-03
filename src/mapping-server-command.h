@@ -5,7 +5,7 @@
 
 #define OUTPUT_BUFFER_LENGTH     128
 
-
+#define HEADER_NO_ID                             0
 #define COMMAND_STIMULATOR_STATE                 0x01
 
 #define COMMAND_OUTPUT_ACTIVATED                 0x10
@@ -18,9 +18,10 @@
 
 #pragma pack(push, 1)
 typedef struct server_command_data_header_s {
+    uint8_t commandId;                      // 1 byte
     uint8_t type;                           // 1 byte
     uint8_t length;                         // 1 byte
-} server_command_data_header_t;             // 2 byte
+} server_command_data_header_t;             // 3 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
@@ -29,7 +30,7 @@ typedef struct server_command_stimulator_state_s {
     uint8_t state;                          // 1 byte
     uint8_t noUpdate;                       // 1 byte
     uint32_t timestamp;                     // 4 byte
-} server_command_stimulator_state_t;        // 8 byte
+} server_command_stimulator_state_t;        // 9 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
@@ -37,7 +38,7 @@ typedef struct server_command_io_change_s {
     server_command_data_header_t header;    // 2 byte
     uint8_t index;                          // 1 byte
     uint32_t timestamp;                     // 4 byte
-} server_command_io_change_t;               // 7 byte
+} server_command_io_change_t;               // 8 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
@@ -46,18 +47,18 @@ typedef struct server_command_sequence_part_request_s {
     uint16_t offset;                        // 2 byte
     uint8_t index;                          // 1 byte
     uint32_t timestamp;                     // 4 byte
-} server_command_sequence_part_request_t;   // 9 byte
+} server_command_sequence_part_request_t;   // 10 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct server_command_debug_s {
-    server_command_data_header_t header;    // 2 byte
+    server_command_data_header_t header;    // 3 byte
     //ExperimentConfig experimentConfig;
 } server_command_debug_t;
 #pragma pack(pop)
 
 union ServerCommandData {
-    server_command_data_header_t header;                        // 2 byte
+    server_command_data_header_t header;                        // 3 byte
     server_command_io_change_t commandIOChange;                 // 7 byte
     server_command_stimulator_state_t commandStimulatorState;   // 7 byte
     server_command_debug_t commandDebug;

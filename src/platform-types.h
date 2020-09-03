@@ -7,7 +7,7 @@
 typedef uint8_t experiment_type_t;
 typedef uint8_t experiment_output_count_t;
 typedef uint8_t experiment_output_type_t;
-typedef uint8_t experiment_output_brightness_t;
+typedef float experiment_output_brightness_t;
 typedef us_timestamp_t experiment_output_out_t;
 typedef us_timestamp_t experiment_output_wait_t;
 

@@ -16,8 +16,8 @@
 #define DISPLAY_ADDRESS 0x4E
 
 /*---------- Information LED definition -----------*/
-#define LED_READY       PC_7
-#define LED_BUSSY       PA_9
+#define LED_READY       PA_12
+#define LED_BUSSY       PB_12
 
 /*------------ Outputs pin definition -------------*/
 #define OUTPUT_PIN_1    PA_8
@@ -26,11 +26,11 @@
 #define OUTPUT_PIN_4    PB_5
 #define OUTPUT_PIN_5    PB_3
 #define OUTPUT_PIN_6    PA_10
-#define OUTPUT_PIN_7    PB_14
-#define OUTPUT_PIN_8    PB_15
+#define OUTPUT_PIN_7    PC_8
+#define OUTPUT_PIN_8    PC_9
 
-#define INPUT_PIN_1     PC_9
-#define INPUT_PIN_2     PC_8
+#define INPUT_PIN_1     PC_10
+#define INPUT_PIN_2     PC_11
 #define INPUT_PIN_3     PC_6
 #define INPUT_PIN_4     PC_5
 #define INPUT_PIN_5     PC_14

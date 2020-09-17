@@ -288,7 +288,7 @@ private:
     void setOutput(uint8_t index, experiment_output_brightness_t brightness, experiment_output_type_t outputType) {
         if ((outputType & 0x01) == 1) {
             // Jedná se o LED -> tak ji rozsvítím podle svítivosti
-            *this->m_usedPeripherals->outputs[index] = brightness;
+            *this->m_usedPeripherals->outputs[index] = brightness / 100.0;
         } else {
             // Jedná se o grafický, nebo zvukový výstup, tak to signalizuji externímu zařízení
             this->m_usedPeripherals->graphicsSerial->putc(index);
@@ -530,7 +530,7 @@ private:
         }
 
         const experiment_output_type_t outputType = this->m_experimentConfig.experimentCVEP.head.outputType;
-        const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentCVEP.head.brightness / 100.0f;
+        const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentCVEP.head.brightness;
         const experiment_cvep_bit_shift_t bitShift = this->m_experimentConfig.experimentCVEP.head.bitShift;
         const experiment_cvep_pattern_t pattern = this->m_experimentConfig.experimentCVEP.head.pattern;
         const experiment_output_count_t outputCount = this->m_experimentConfig.experimentCVEP.head.outputCount;
@@ -640,7 +640,7 @@ private:
         this->m_usedPeripherals->timeout8->attach_us(callback(this, &ExperimentProgram::timeoutFVEP8), period);
     }
     void tickerFVEP(uint8_t index) {
-        const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentFVEP.outputs[index].brightness / 100.0f;
+        const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentFVEP.outputs[index].brightness;
         const experiment_output_type_t outputType = this->m_experimentConfig.experimentFVEP.outputs[index].outputType;
         this->setOutput(index, brightness, outputType);
         this->ioChange(COMMAND_OUTPUT_ACTIVATED, index);
@@ -762,7 +762,7 @@ private:
         }
     }
     bool tickerTVEP(uint8_t index) {
-        const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentTVEP.outputs[index].brightness / 100.0f;
+        const experiment_output_brightness_t brightness = this->m_experimentConfig.experimentTVEP.outputs[index].brightness;
         const experiment_tvep_output_pattern_length_t patternLength = this->m_experimentConfig.experimentTVEP.outputs[index].patternLength;
         const experiment_tvep_output_pattern_t pattern = this->m_experimentConfig.experimentTVEP.outputs[index].pattern;
         const experiment_output_type_t outputType = this->m_experimentConfig.experimentTVEP.outputs[index].outputType;
@@ -859,7 +859,7 @@ public:
      */
     void save(ExperimentConfig &experimentConfig) {
         this->clear();
-        m_experimentConfig = experimentConfig;
+        this->m_experimentConfig = experimentConfig;
         this->m_state = UPLOADED;
     }
 

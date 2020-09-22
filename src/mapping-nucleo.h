@@ -16,8 +16,8 @@
 #define DISPLAY_ADDRESS 0x4E
 
 /*---------- Information LED definition -----------*/
-#define LED_READY       PA_12
-#define LED_BUSSY       PB_12
+#define LED_READY       PA_13
+#define LED_BUSSY       PA_14
 
 /*------------ Outputs pin definition -------------*/
 #define OUTPUT_PIN_1    PA_8

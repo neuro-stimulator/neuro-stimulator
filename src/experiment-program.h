@@ -305,12 +305,10 @@ private:
         this->m_state = FINISHED;
         ServerCommandData commandData;
         commandData.header.commandId = HEADER_NO_ID;
-        commandData.header.type = COMMAND_STIMULATOR_STATE;
-        commandData.header.length = 9; //sizeof(server_command_io_change_t);
-        commandData.commandStimulatorState.state = this->getState();
-        commandData.commandStimulatorState.noUpdate = 0;
+        commandData.header.type = COMMAND_STIMULATOR_REQUEST_FINISH;
+        commandData.header.length = 8; //sizeof(server_command_io_change_t);
         uint32_t timestamp = this->m_usedPeripherals->globalTimer->read_us();
-        commandData.commandStimulatorState.timestamp = timestamp & 0xFFFFFFFF;
+        commandData.commandStimulatorRequestFinish.timestamp = timestamp & 0xFFFFFFFF;
         this->m_serverCommandQueue->push(commandData);
     }
 

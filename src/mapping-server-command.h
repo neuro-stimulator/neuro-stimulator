@@ -7,6 +7,7 @@
 
 #define HEADER_NO_ID                             0
 #define COMMAND_STIMULATOR_STATE                 0x01
+#define COMMAND_STIMULATOR_REQUEST_FINISH        0x02
 
 #define COMMAND_OUTPUT_ACTIVATED                 0x10
 #define COMMAND_OUTPUT_DEACTIVATED               0x11
@@ -31,6 +32,13 @@ typedef struct server_command_stimulator_state_s {
     uint8_t noUpdate;                       // 1 byte
     uint32_t timestamp;                     // 4 byte
 } server_command_stimulator_state_t;        // 9 byte
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+typedef struct server_command_stimulator_request_finish_s {
+    server_command_data_header_t header;    // 2 byte
+    uint32_t timestamp;                     // 4 byte
+} server_command_stimulator_request_finish_t; // 6 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
@@ -63,6 +71,7 @@ union ServerCommandData {
     server_command_stimulator_state_t commandStimulatorState;   // 7 byte
     server_command_debug_t commandDebug;
     server_command_sequence_part_request_t commandSequencePartRequest; // 8 byte
+    server_command_stimulator_request_finish_t commandStimulatorRequestFinish; // 6 byte
 
     char rawData[OUTPUT_BUFFER_LENGTH];
 };

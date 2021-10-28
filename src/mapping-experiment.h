@@ -194,14 +194,14 @@ typedef struct experiment_rea_output_s {
 typedef struct experiment_rea_runtime_data_s {
     uint16_t counter;                                                 // 2 byte
     uint8_t usedOutput;                                               // 1 byte
-} experiment_rea_runtime_data_t;                                      // = 11 byte
+} experiment_rea_runtime_data_t;                                      // = 3 byte
 #pragma pack(pop)
 
 #pragma pack(push, 1)
 typedef struct experiment_rea_s {
     experiment_rea_head_t head;                                        // 30 byte
     experiment_rea_output_t outputs;                                   // 0 byte
-    experiment_rea_runtime_data_t data;                                // 11 byte
+    experiment_rea_runtime_data_t data;                                // 3 byte
 } experiment_rea_t;                                                    // = 30 byte
 #pragma pack(pop)
 

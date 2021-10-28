@@ -46,6 +46,9 @@ private:
      */
     void setupERP() {
         this->m_experimentConfig.experimentERP.data.randomBase = 10;
+        this->m_experimentConfig.experimentERP.data.currentOutput = 0;
+        memset(&this->m_experimentConfig.experimentERP.data.sequence_data, 0, sizeof(experiment_erp_sequence_data_t));
+        memset(this->m_experimentConfig.experimentERP.data.accumulators, 0, sizeof(uint32_t) * TOTAL_OUTPUT_COUNT);
         // us_timestamp_t period = this->m_experimentConfig.experimentERP.head.out
         //                    + this->m_experimentConfig.experimentERP.head.wait
         //                    + 0.0f;
@@ -83,6 +86,7 @@ private:
         const us_timestamp_t period = this->m_experimentConfig.experimentCVEP.head.out
                            + this->m_experimentConfig.experimentCVEP.head.wait
                            + 0.0f;
+        this->m_experimentConfig.experimentCVEP.data.counter = 0;
         this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerCVEP), period);
     }
 
@@ -168,6 +172,7 @@ private:
      */
     void setupTVEP() {
         const uint8_t outputCount = this->m_experimentConfig.experimentTVEP.head.outputCount;
+        memset(this->m_experimentConfig.experimentTVEP.data.counters, 0, sizeof(uint16_t) * TOTAL_OUTPUT_COUNT);
         us_timestamp_t period = 0.0f;
 
         switch (outputCount) {
@@ -237,6 +242,7 @@ private:
      */
     void setupREA() {
         this->m_experimentConfig.experimentREA.data.counter = 0;
+        this->m_experimentConfig.experimentREA.data.usedOutput = 0;
         const us_timestamp_t period = this->m_experimentConfig.experimentREA.head.waitTimeMax;
         this->m_usedPeripherals->ticker1->attach_us(callback(this, &ExperimentProgram::tickerREA), period);
     }

@@ -131,7 +131,7 @@ public:
                 const float brightness = commandData.commandBackdor1.brightness / 100.0f;
                 experimentProgram.setOutput(index, brightness);
                 //*context.usedPeripherals.outputs[index] = brightness;
-                this->resultStimulatorState(resultCommand, globalTimer, 0xF2, 0);
+                this->resultStimulatorState(resultCommand, globalTimer, experimentProgram.getState(), 0);
 
                 break;
             }

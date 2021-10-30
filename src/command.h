@@ -119,7 +119,7 @@ public:
                 uint8_t index = commandData.commandSequencePart.index;
                 uint32_t data = commandData.commandSequencePart.data;
                 experimentProgram.updateAccumulator(index, data);
-                this->resultStimulatorState(resultCommand, globalTimer, 0x20, 0);
+                this->resultStimulatorState(resultCommand, globalTimer, experimentProgram.getState(), 0);
                 break;
             }
 

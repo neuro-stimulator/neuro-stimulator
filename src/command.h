@@ -6,6 +6,7 @@
 #include "mapping-server-command.h"
 #include "experiment-program.h"
 
+extern TextLCD_I2C lcd;
 class Command {
 
 private:
@@ -42,37 +43,16 @@ public:
             }
             // Práce s obrazovkou
             case COMMAND_DISPLAY: {// 0x02
-                // Vymazání obsahu obrazovky
-                //if (data[1] == 0x00) {
                 if (commandData.commandLCD.action == 0x00) {
-                    // context.lcd->cls();
-                } else {
+                    experimentProgram.getLCD()->clear();
+                }
                 // Zápis na obrazovku
-                // if (data[1] == 0x01) {
-                if (commandData.commandLCD.action == 0x01) {
-                    // Získám X-ovou souřadnici začátku textu
-                    // Hodnotu moduluji, abych se nedostal mimo offset
-                    //const char x = data[2] % context.lcd->columns();
-                    // const char x = commandData.commandLCD.column % context.lcd->columns();
-                    // Záskám Y-ovou souřadnici začátku textu
-                    // Hodnotu moduluji, abych se nedostal mimo offset
-                    //const char y = data[3] % context.lcd->rows();
-                    // const char y = commandData.commandLCD.row % context.lcd->rows();
-                    // Nastavím požadovanou souřadnici začátku textu
-                    // context.lcd->locate(x,y);
-                    // Založím pomocnou proměnnou, která bude obsahovat samotný
-                    // text
-                    //char text[length];
-                    // Znaky pěkně jeden po druhém nakopíruji do této pomocné
-                    // proměnné
-                    //for (int i = 0; i < length; i++) {
-                        //text[i] = data[i+4];
-                    //    commandData.commandLCD.text[i];
-                    //}
-                    // Nakonec text vypíšu na display
-                    //context.lcd->printf(text);
-                    // context.lcd->printf(commandData.commandLCD.text);
-                } }
+                else if (commandData.commandLCD.action == 0x01) {
+                    experimentProgram.getLCD()->print(commandData.commandLCD.text);
+
+                } else if(commandData.commandLCD.action == 0x02) {
+                   experimentProgram.getLCD()->printLine(commandData.commandLCD.text);
+                }
                 break;
             }
             // Správa experimentu

@@ -1,8 +1,11 @@
 #include "mbed.h"
-// #include "TextLCD.h"
 #include "string.h"
 
+#include "TextLCD.h"
+#include "LCDDisplay.h"
 
+#include "WS2812.h"
+#include "PixelArray.h"
 
 #define TOTAL_OUTPUT_COUNT            8
 
@@ -22,8 +25,6 @@
 /*------------------ Variables -------------------*/
 Serial                         pc(TX_PIN, RX_PIN);
 Serial                         graphicsSerial(GRAPHICS_TX_PIN, GRAPHICS_RX_PIN);
-I2C                            i2c_lcd(SDA_PIN, SCL_PIN);
-// TextLCD_I2C                    lcd(&i2c_lcd, DISPLAY_ADDRESS, TextLCD::LCD16x2);
 DigitalOut                     ledReady(LED_READY);
 DigitalOut                     ledBussy(LED_BUSSY);
 event_callback_t               serialEventCb;
@@ -31,6 +32,10 @@ uint8_t                        rx_buf[BUFF_LENGTH + 1];
 CircularBuffer<Command, 16>    commands;
 CircularBuffer<ServerCommandData, 16> serverCommands;
 Timer                          globalTimer;
+
+I2C                            i2c_lcd(SDA_PIN, SCL_PIN);
+TextLCD_I2C                    lcd(&i2c_lcd, DISPLAY_ADDRESS, TextLCD::LCD20x4);
+LCDDisplay                     display(&lcd);
 
 /*------------------ Callbacks -------------------*/
 
@@ -211,6 +216,8 @@ int main() {
     usedPeripherals.timeouts[5] = &timeout6;
     usedPeripherals.timeouts[6] = &timeout7;
     usedPeripherals.timeouts[7] = &timeout8;
+
+    usedPeripherals.display = &display;
 
     // Tímto dáme přístup experimentu k periferiím
     // Není to nejlepší řešení, ale funguje to

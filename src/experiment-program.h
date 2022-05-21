@@ -998,6 +998,10 @@ public:
         return this->m_state;
     }
 
+    LCDDisplay *getLCD() {
+        return this->m_usedPeripherals->display;
+    }
+
     void updateAccumulator(uint8_t index, uint32_t data) {
         this->m_experimentConfig.experimentERP.data.accumulators[index] = data;
         this->m_experimentConfig.experimentERP.data.sequence_data.requestIndex++;

@@ -56,6 +56,9 @@ typedef struct used_peripherals_s {
     Timer *globalTimer;
 
     Serial *graphicsSerial;
+
+    // Reference na LCD displej
+    LCDDisplay *display;
 } used_peripherals_t;
 
 #endif
